@@ -191,7 +191,8 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
   <div class="tb-tabs">
     <button class="tb-tab active" onclick="showView('overview')">Dashboard</button>
     <button class="tb-tab" onclick="showView('timetable')">Timetable</button>
-    <button class="tb-tab" onclick="showView('week1')">Week 1 Notes</button>
+    <button class="tb-tab" onclick="showView('week1')">Week 1</button>
+    <button class="tb-tab" onclick="showView('week2')">Week 2</button>
   </div>
   <div class="tb-right">
     <div class="progress-pill" id="progress-pill">0 / 0 done</div>
@@ -206,7 +207,7 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
     <div class="sb-divider"></div>
     <div class="sb-label">Content Notes</div>
     <div class="sb-item" onclick="showView('week1');setSbActive(this)" id="sb-week1"><span class="sb-icon">🦴</span><span>Week 1 — Anatomy I</span><span class="sb-check-count" id="w1-count">0/7</span></div>
-    <div class="sb-item" style="opacity:.4;cursor:default"><span class="sb-icon">🔒</span>Week 2 — Anatomy II</div>
+    <div class="sb-item" onclick="showView('week2');setSbActive(this)" id="sb-week2"><span class="sb-icon">🧠</span><span>Week 2 — Anatomy II</span><span class="sb-check-count" id="w2-count">0/19</span></div>
     <div class="sb-item" style="opacity:.4;cursor:default"><span class="sb-icon">🔒</span>Week 3 — Anatomy III</div>
     <div class="sb-item" style="opacity:.4;cursor:default"><span class="sb-icon">🔒</span>Week 4 — Physiology I</div>
     <div class="sb-item" style="opacity:.4;cursor:default"><span class="sb-icon">🔒</span>Week 5 — Physiology II</div>
@@ -240,9 +241,9 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
         <div class="ov-pb-label" style="margin-top:6px"><span>Overall progress</span><span id="ov-pct">0%</span></div>
       </div>
       <div class="today-card">
-        <div class="today-label">📍 Start here — Friday 12 June 2026</div>
-        <div class="today-title">Week 1 · Day 1 · Skull Base Foramina</div>
-        <div class="today-focus">Focus: Skull osteology — draw and label all foramina and their contents (2 hours)</div>
+        <div class="today-label">📍 Week 2 — Friday 19 June 2026</div>
+        <div class="today-title">Week 2 · Day 1 · Brainstem Cross-Sections</div>
+        <div class="today-focus">Focus: Midbrain cross-sections (CN III, IV nuclei) — draw and label superior/inferior colliculus levels (2 hours)</div>
       </div>
       <div style="font-size:12px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;">8-Week Overview</div>
       <div class="ov-week-grid" id="ov-week-grid"></div>
@@ -294,8 +295,21 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);co
         <div style="font-size:13px;color:var(--text2);">15 questions · 75 stems · 25% of exam · Images: Wikimedia Commons (open license)</div>
       </div>
       <div id="w1-sections"></div>
+      <div style="margin-top:24px;padding:14px 18px;background:rgba(82,183,136,.06);border:1px solid rgba(82,183,136,.15);border-radius:8px;font-size:12px;color:var(--text3);text-align:center;">
+        Finished Week 1? Continue to <strong style="color:var(--green);cursor:pointer;" onclick="showView('week2')">Week 2 — Brainstem, Cranial Nerves &amp; Visual Pathways →</strong>
+      </div>
+    </div>
+
+    <!-- WEEK 2 NOTES -->
+    <div id="view-week2" class="view">
+      <div style="margin-bottom:24px;">
+        <div style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;">Week 2 · Anatomy II</div>
+        <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:6px;">Brainstem, Cranial Nerves &amp; Visual Pathways</div>
+        <div style="font-size:13px;color:var(--text2);">19 subsections · 95 stems · Part of 25% Anatomy weighting · Custom labelled diagrams + OpenStax images</div>
+      </div>
+      <div id="w2-sections"></div>
       <div style="margin-top:24px;padding:14px 18px;background:rgba(74,159,212,.06);border:1px solid rgba(74,159,212,.15);border-radius:8px;font-size:12px;color:var(--text3);text-align:center;">
-        After completing all sections, ask Claude for <strong style="color:var(--blue)">Week 2 content notes</strong> to unlock the next week.
+        After completing all sections, ask Claude for <strong style="color:var(--blue)">Week 3 content notes</strong> to unlock the next week.
       </div>
     </div>
 
@@ -705,6 +719,442 @@ const W1_SECTIONS=[
   }
 ];
 
+// Week 2 Q&A — to be inserted into each subsection's qa array
+const W2_QA = {
+  "w2s0a": [
+    {topic:"Brainstem Organisation", stems:[
+      {stem:"The brainstem houses the nuclei of all twelve cranial nerves.", answer:false, exp:"FALSE. CN I (olfactory) and CN II (optic) do NOT have nuclei in the brainstem — they are extensions of the forebrain/diencephalon. Only CN III through XII have their nuclei within the brainstem (midbrain, pons, medulla)."},
+      {stem:"In brainstem cross-sections, motor cranial nerve nuclei are typically located medially while sensory nuclei are located laterally.", answer:true, exp:"TRUE. This follows the embryological basal plate (motor, ventral/medial) vs alar plate (sensory, dorsal/lateral) organisation inherited from the developing neural tube, analogous to the anterior (motor) vs posterior (sensory) horns of the spinal cord."},
+      {stem:"CN VIII has its vestibular nucleus located in the medulla and its cochlear nucleus located in the pons.", answer:false, exp:"FALSE — reversed. The VESTIBULAR nuclei are in the PONS, and the COCHLEAR nuclei are in the MEDULLA. CN VIII is unique in having its nuclei split across two brainstem regions."},
+      {stem:"The medulla oblongata is continuous with the spinal cord at the level of the foramen magnum.", answer:true, exp:"TRUE. The medulla is the most caudal brainstem segment and becomes continuous with the spinal cord precisely at the foramen magnum — this is why severe tonsillar herniation through the foramen magnum is fatal, as it compresses this critical junction containing cardiorespiratory centres."},
+      {stem:"The pons contains the nuclei for the greatest number of cranial nerves compared to the midbrain and medulla.", answer:true, exp:"TRUE. The pons houses CN V, VI, VII, and VIII (vestibular part) = 4 nerves (or arguably parts of 4-5 if counting VIII separately). The midbrain houses only CN III and IV = 2 nerves. The medulla houses CN VIII (cochlear part), IX, X, XI, XII = effectively 4-5. The pons is also the largest brainstem region by volume."},
+    ]},
+  ],
+  "w2s0b": [
+    {topic:"Midbrain Cross-Section", stems:[
+      {stem:"The trochlear nerve (CN IV) is the only cranial nerve to exit the brainstem from its dorsal (posterior) surface.", answer:true, exp:"TRUE. All other 11 cranial nerves exit from the anterior or anterolateral brainstem surface. CN IV is unique in exiting dorsally, just below the inferior colliculus, after completely decussating within the midbrain."},
+      {stem:"Weber's syndrome results from a lesion of the midbrain affecting the CN III nucleus and the corticospinal tract within the cerebral peduncle, producing ipsilateral CN III palsy with ipsilateral hemiplegia.", answer:false, exp:"FALSE. Weber's syndrome produces IPSILATERAL CN III palsy (nerve fibres exiting at that level) with CONTRALATERAL hemiplegia (corticospinal tract fibres in the cerebral peduncle have not yet decussated at this level — they cross lower down at the medullary pyramids). The crossed pattern (ipsilateral CN palsy + contralateral body weakness) is the hallmark of all brainstem syndromes."},
+      {stem:"The Edinger-Westphal nucleus, providing parasympathetic innervation to the eye via CN III, is located at the level of the superior colliculus in the midbrain.", answer:true, exp:"TRUE. The Edinger-Westphal nucleus is a midline, paired parasympathetic nucleus situated adjacent to the main (somatic motor) CN III nucleus, both at the superior colliculus level of the midbrain."},
+      {stem:"The cerebral aqueduct (aqueduct of Sylvius) runs through the tegmentum of the midbrain, separating it from the tectum.", answer:true, exp:"TRUE. The aqueduct is the structural landmark dividing the midbrain into tectum (posterior/dorsal, containing the colliculi) and tegmentum (anterior/ventral, containing nuclei and ascending/descending tracts). It connects the third and fourth ventricles."},
+      {stem:"A lesion of the inferior colliculus level of the midbrain would be expected to produce a contralateral superior oblique palsy if the CN IV nucleus itself is destroyed.", answer:true, exp:"TRUE. Because CN IV completely decussates before exiting the brainstem, a nuclear lesion on the LEFT produces a RIGHT (contralateral) superior oblique palsy — the opposite of every other cranial nerve nucleus, which produce ipsilateral palsies when damaged."},
+    ]},
+  ],
+  "w2s0c": [
+    {topic:"Pons & Cranial Nerves V-VIII", stems:[
+      {stem:"CN VI (abducens) has the longest subarachnoid course of any cranial nerve, making it particularly vulnerable to compression from raised intracranial pressure.", answer:true, exp:"TRUE. CN VI travels a long course up and over the petrous temporal ridge within the subarachnoid space before entering the cavernous sinus, making it prone to stretch injury with any cause of raised ICP — producing a 'false localising sign' (CN VI palsy not indicating the actual lesion site)."},
+      {stem:"In cerebellopontine angle syndrome from an acoustic neuroma, CN V (trigeminal) is typically affected before CN VII (facial) as the tumour enlarges.", answer:false, exp:"FALSE — order reversed. CN VIII is affected FIRST (it's the nerve of origin — hearing loss, tinnitus, vertigo), followed by CN VII (facial weakness, often later than expected due to resistance to compression), and CN V (loss of corneal reflex) is typically affected LAST as the tumour grows large enough to reach the more medially-positioned trigeminal nerve."},
+      {stem:"The trigeminal nerve (CN V) is the largest cranial nerve and originates from the lateral aspect of the mid-pons.", answer:true, exp:"TRUE. CN V is indeed the largest cranial nerve, carrying both extensive sensory innervation (face, cornea, oral cavity) and motor innervation (muscles of mastication). It emerges from the lateral mid-pons before travelling to the trigeminal (Gasserian) ganglion in Meckel's cave."},
+      {stem:"CN VII loops around the CN VI nucleus within the pons, creating a visible bulge on the floor of the fourth ventricle called the facial colliculus.", answer:true, exp:"TRUE. The internal genu of the facial nerve wraps around the abducens nucleus before CN VII exits the brainstem — this creates the facial colliculus, a visible landmark on the floor of the fourth ventricle. A lesion here can affect both CN VI and CN VII function simultaneously."},
+      {stem:"The pontomedullary junction is where three cranial nerves — CN VI, VII, and VIII — emerge from medial to lateral.", answer:true, exp:"TRUE. At the pontomedullary junction, CN VI emerges most medially (near the midline), CN VII emerges more laterally, and CN VIII (vestibulocochlear) emerges most laterally at the cerebellopontine angle — this order is clinically relevant for understanding lesion patterns in this region."},
+    ]},
+  ],
+  "w2s0d": [
+    {topic:"Medulla & Decussation", stems:[
+      {stem:"Approximately 85-90% of corticospinal tract fibres decussate at the pyramidal decussation in the medulla, forming the lateral corticospinal tract.", answer:true, exp:"TRUE. This major motor decussation occurs at the most caudal medulla. The crossed fibres (85-90%) form the lateral corticospinal tract; the uncrossed fibres (10-15%) form the anterior corticospinal tract, which decussates later at the spinal cord segmental level."},
+      {stem:"Lateral medullary (Wallenberg) syndrome typically presents with contralateral limb weakness due to involvement of the medullary pyramids.", answer:false, exp:"FALSE. Wallenberg syndrome characteristically presents WITHOUT limb weakness because the pyramids are located ANTERIORLY in the medulla and are SPARED in this LATERAL syndrome (caused by PICA occlusion). This is the key distinguishing feature from medial medullary syndrome, which DOES cause contralateral hemiplegia."},
+      {stem:"The nucleus ambiguus provides motor innervation to the pharynx and larynx via cranial nerves IX, X, and XI.", answer:true, exp:"TRUE. The nucleus ambiguus is a key medullary motor nucleus supplying the muscles of the pharynx, larynx, and soft palate via CN IX, X, and the cranial root of XI. Bilateral damage produces bulbar palsy with severe dysphagia, dysarthria, and dysphonia."},
+      {stem:"Medial medullary syndrome produces ipsilateral hemiplegia and contralateral loss of tongue movement.", answer:false, exp:"FALSE — both sides reversed. Medial medullary syndrome produces CONTRALATERAL hemiplegia (pyramid involvement, fibres not yet decussated) and IPSILATERAL tongue weakness/deviation (CN XII nucleus and exiting fibres are ipsilateral, not yet crossed). This crossed pattern (ipsilateral CN sign + contralateral body sign) is characteristic of all brainstem syndromes."},
+      {stem:"The medial lemniscus, carrying dorsal column sensory information, decussates at a slightly different level than the pyramidal decussation.", answer:true, exp:"TRUE. The sensory decussation (medial lemniscus, from nucleus gracilis and nucleus cuneatus) occurs slightly ROSTRAL (higher) to the motor pyramidal decussation, though both occur within the medulla. This is sometimes tested as a subtle anatomical distinction."},
+    ]},
+  ],
+  "w2s1a": [
+    {topic:"CN I & CN II", stems:[
+      {stem:"The olfactory and optic nerves are myelinated by Schwann cells, the same as all other cranial nerves.", answer:false, exp:"FALSE. CN I and CN II are unique among the cranial nerves — they are technically extensions of the central nervous system (forebrain) rather than true peripheral nerves, and are myelinated by OLIGODENDROCYTES (the CNS myelinating cell), not Schwann cells. This explains their poor regenerative capacity after injury, unlike CN III-XII."},
+      {stem:"The olfactory pathway is unique among sensory pathways in that it reaches the cerebral cortex without first relaying through the thalamus.", answer:true, exp:"TRUE. Unlike all other sensory modalities (vision, hearing, touch, taste, etc.), olfactory information travels directly from the olfactory bulb via the olfactory tract to the primary olfactory cortex (uncus, piriform cortex) WITHOUT an obligatory thalamic relay — a distinctive feature of the olfactory system."},
+      {stem:"Anosmia following head trauma most commonly results from shearing of the olfactory nerve filaments as they cross the cribriform plate.", answer:true, exp:"TRUE. Acceleration-deceleration head injuries cause relative movement between the brain and skull, shearing the delicate olfactory filaments at their fixed point of passage through the cribriform plate foramina. This is the most common mechanism of post-traumatic anosmia."},
+      {stem:"Optic neuritis, commonly associated with multiple sclerosis, characteristically presents with painless, gradual visual loss and a normal pupillary light reflex.", answer:false, exp:"FALSE — both features incorrect. Optic neuritis classically presents with PAINFUL visual loss (worse on eye movement, due to inflammation of the nerve sheath which moves with extraocular muscle attachments) developing over hours to days, AND produces a RELATIVE AFFERENT PUPILLARY DEFECT (RAPD) due to the asymmetric optic nerve dysfunction."},
+      {stem:"Olfactory receptor neurones are capable of lifelong regeneration from basal stem cells in the olfactory epithelium.", answer:true, exp:"TRUE. This is a unique feature of the olfactory system — the peripheral olfactory receptor neurones continuously regenerate from basal stem cells throughout adult life, unlike most other neurones. However, if the central connections (cribriform plate filaments) are severely sheared with scarring, even regenerated neurones may fail to re-establish bulb connections."},
+    ]},
+  ],
+  "w2s1b": [
+    {topic:"CN III Oculomotor", stems:[
+      {stem:"The oculomotor nerve innervates the superior rectus, inferior rectus, medial rectus, and inferior oblique muscles, along with the levator palpebrae superioris.", answer:true, exp:"TRUE. CN III supplies 4 of the 6 extraocular muscles (all except lateral rectus [CN VI] and superior oblique [CN IV]), plus the levator palpebrae superioris for eyelid elevation — making it the dominant cranial nerve for eye movement."},
+      {stem:"The parasympathetic fibres of CN III, responsible for pupillary constriction, travel within the core of the nerve and are therefore the last fibres affected by external compression.", answer:false, exp:"FALSE. The parasympathetic fibres travel on the OUTER/SUPERFICIAL surface of CN III, making them the FIRST fibres affected by external compression (such as an expanding aneurysm or uncal herniation). This is precisely why compressive lesions cause pupil-involving CN III palsy, while ischaemic lesions (affecting the nerve's core vasa nervorum supply) tend to spare the pupil."},
+      {stem:"A complete CN III palsy produces an eye that deviates 'down and out' due to the unopposed actions of the lateral rectus and superior oblique muscles.", answer:true, exp:"TRUE. With CN III paralysed, the only remaining functional muscles are lateral rectus (CN VI, causing abduction/'out') and superior oblique (CN IV, causing depression/'down' when combined with the loss of the antagonist inferior oblique) — producing the classic 'down and out' resting eye position."},
+      {stem:"CN III exits the brainstem from the interpeduncular fossa and passes between the posterior cerebral artery and the superior cerebellar artery, making it vulnerable to compression at this site during uncal herniation.", answer:true, exp:"TRUE. This anatomical relationship is clinically critical — CN III runs between PCA (above) and SCA (below) as it exits the interpeduncular fossa, and is the first structure compressed during transtentorial (uncal) herniation, producing the classic 'blown pupil' that signals impending brain herniation."},
+      {stem:"The Edinger-Westphal nucleus sends parasympathetic fibres that synapse in the pterygopalatine ganglion before reaching the eye.", answer:false, exp:"FALSE. CN III parasympathetic fibres synapse in the CILIARY GANGLION (located in the posterior orbit), not the pterygopalatine ganglion. The pterygopalatine ganglion is associated with CN VII (greater petrosal nerve) and supplies the lacrimal gland and nasal mucosa, not the eye's intraocular muscles."},
+    ]},
+  ],
+  "w2s1c": [
+    {topic:"CN IV & CN VI", stems:[
+      {stem:"The superior oblique muscle, innervated by CN IV, is most effective as a depressor of the eye when the eye is in the adducted position.", answer:true, exp:"TRUE. Due to the angle of pull through the trochlea, the superior oblique's depressor action is maximal when the eye is adducted (looking toward the nose), which is why the clinical test for CN IV function is to ask the patient to look down and in. In abduction, the inferior rectus becomes the primary depressor instead."},
+      {stem:"CN VI (abducens) innervates the lateral rectus muscle and is responsible for adduction of the eye.", answer:false, exp:"FALSE. CN VI innervates the lateral rectus, which produces ABDUCTION (moving the eye away from the nose), not adduction. Adduction is produced by the medial rectus, innervated by CN III. A CN VI palsy causes failure of abduction with resulting esotropia (inward deviation)."},
+      {stem:"CN IV has the shortest intracranial course of any cranial nerve, making it relatively resistant to head trauma.", answer:false, exp:"FALSE — both claims incorrect. CN IV has the LONGEST intracranial course of any cranial nerve (due to its dorsal exit and long wrap around the brainstem before reaching the cavernous sinus), making it actually MORE vulnerable, not less, to shearing injury in head trauma."},
+      {stem:"A CN VI palsy can occur as a 'false localising sign' in the setting of raised intracranial pressure from any cause, without indicating the specific location of the underlying pathology.", answer:true, exp:"TRUE. Because of its long subarachnoid course over the petrous ridge, CN VI is particularly susceptible to stretch from generalised raised ICP (regardless of cause — tumour, hydrocephalus, idiopathic intracranial hypertension), making an isolated CN VI palsy a poor localiser of the actual pathology."},
+      {stem:"CN IV is the only cranial nerve whose fibres completely decussate (cross to the contralateral side) before exiting the brainstem.", answer:true, exp:"TRUE. This is a unique and frequently tested feature of CN IV — unlike every other cranial nerve, its fibres fully cross within the midbrain before exiting dorsally, meaning a nuclear lesion produces a CONTRALATERAL superior oblique palsy, the opposite pattern from all other cranial nerve nuclear lesions."},
+    ]},
+  ],
+  "w2s2a": [
+    {topic:"CN VII Facial Nerve", stems:[
+      {stem:"The corneal reflex has CN V as its afferent (sensory) limb and CN VII as its efferent (motor) limb.", answer:true, exp:"TRUE. Touching the cornea is detected by CN V1 (ophthalmic division, via the nasociliary nerve) — the afferent limb. The reflex blink response (orbicularis oculi contraction) is mediated by CN VII — the efferent limb. Testing this reflex assesses both nerves and their respective brainstem connections."},
+      {stem:"An upper motor neurone facial palsy characteristically spares the forehead because the upper facial muscles receive bilateral cortical innervation.", answer:true, exp:"TRUE. The upper face (frontalis, orbicularis oculi) receives corticobulbar input from BOTH cerebral hemispheres, so a unilateral UMN lesion (e.g., stroke) still allows forehead movement via the intact contralateral pathway. The lower face receives predominantly CONTRALATERAL innervation only, so it is weak. This forehead-sparing pattern distinguishes UMN (central) from LMN (peripheral, Bell's palsy) facial palsy, where the entire ipsilateral face is affected."},
+      {stem:"The chorda tympani branch of CN VII carries taste sensation from the posterior one-third of the tongue.", answer:false, exp:"FALSE. The chorda tympani carries taste from the ANTERIOR two-thirds of the tongue. Taste from the POSTERIOR one-third is carried by CN IX (glossopharyngeal). This is a frequently confused fact in cranial nerve anatomy."},
+      {stem:"The greater petrosal nerve, a branch of CN VII, carries parasympathetic fibres to the lacrimal gland via a synapse in the pterygopalatine ganglion.", answer:true, exp:"TRUE. The greater petrosal nerve branches from CN VII at the geniculate ganglion, travels through the pterygoid canal, and synapses in the pterygopalatine ganglion, from which postganglionic fibres supply the lacrimal gland (and nasal/palatine mucous glands) — this pathway is essential for tear production."},
+      {stem:"Bell's palsy, a lower motor neurone facial palsy, typically affects only the lower half of the face while sparing the forehead.",answer:false,exp:"FALSE. Bell's palsy (a LMN lesion, typically idiopathic/viral) affects the ENTIRE ipsilateral face, INCLUDING the forehead — patients cannot raise their eyebrow or close their eye on the affected side. This is the opposite pattern from UMN facial palsy and is a key bedside distinguishing feature."},
+    ]},
+  ],
+  "w2s2b": [
+    {topic:"CN VIII, IX, X", stems:[
+      {stem:"CN VIII (vestibulocochlear) contains motor fibres that control the tensor tympani muscle of the middle ear.", answer:false, exp:"FALSE. CN VIII is PURELY SENSORY (hearing via cochlear division, balance via vestibular division) — it contains no motor fibres. The tensor tympani is actually innervated by CN V3 (mandibular division of trigeminal), while the stapedius muscle is innervated by CN VII."},
+      {stem:"The gag reflex has CN IX as its afferent limb and CN X as its efferent limb.", answer:true, exp:"TRUE. Touching the posterior pharyngeal wall is sensed by CN IX (glossopharyngeal) — the afferent limb. The resulting elevation of the soft palate and pharyngeal contraction is mediated by CN X (vagus) via the nucleus ambiguus — the efferent limb."},
+      {stem:"The left recurrent laryngeal nerve has a shorter intrathoracic course than the right, making it less vulnerable to mediastinal pathology.", answer:false, exp:"FALSE — reversed. The LEFT recurrent laryngeal nerve has a LONGER course, looping under the aortic arch within the thorax, making it MORE vulnerable to mediastinal pathology (aortic aneurysm, mediastinal tumours, cardiac surgery). The right recurrent laryngeal nerve loops under the right subclavian artery at a more superior, shorter course."},
+      {stem:"CN IX provides parasympathetic innervation to the parotid gland via a synapse in the otic ganglion.", answer:true, exp:"TRUE. The glossopharyngeal nerve's parasympathetic fibres (via the lesser petrosal nerve) synapse in the otic ganglion, with postganglionic fibres travelling via the auriculotemporal nerve (a branch of CN V3) to reach the parotid gland — a notable example of cranial nerve fibres 'hitchhiking' on another nerve's branches."},
+      {stem:"Vernet's syndrome (jugular foramen syndrome) results from a lesion affecting CN VII, VIII, and IX as they pass through the jugular foramen together.", answer:false, exp:"FALSE. Vernet's syndrome affects CN IX, X, and XI, which pass through the jugular foramen. CN VII and VIII pass through the internal acoustic meatus (a separate foramen). A lesion affecting CN VII and VIII together with IX, X is a different and more extensive presentation, not classic Vernet's syndrome."},
+    ]},
+  ],
+  "w2s2c": [
+    {topic:"CN XI & CN XII", stems:[
+      {stem:"CN XI (accessory) has both a cranial root arising from the medulla and a spinal root arising from the upper cervical spinal cord.", answer:true, exp:"TRUE. This dual origin is unique to CN XI. The cranial root arises from the medulla and briefly joins the vagus nerve before separating; the spinal root arises from C1-C5 of the spinal cord, ascends through the foramen magnum, and supplies the sternocleidomastoid and trapezius muscles."},
+      {stem:"A lesion of the right hypoglossal nerve causes the tongue to deviate to the left on protrusion.", answer:false, exp:"FALSE. A LMN hypoglossal nerve lesion causes the tongue to deviate TOWARD the side of the lesion (ipsilateral), not away. A right CN XII palsy causes deviation to the RIGHT on protrusion, because the intact left genioglossus pushes the tongue to the weakened (right) side."},
+      {stem:"The sternocleidomastoid muscle, innervated by CN XI, contracts to turn the head toward the same side as the contracting muscle.", answer:false, exp:"FALSE. The sternocleidomastoid turns the head to the OPPOSITE side when it contracts (right SCM contraction turns the head to the left). Therefore, a right CN XI lesion causes weakness turning the head to the LEFT (away from the lesion side), which is a commonly confused point."},
+      {stem:"CN XII innervates all intrinsic and extrinsic muscles of the tongue except palatoglossus, which is innervated by the vagus nerve.", answer:true, exp:"TRUE. Palatoglossus is embryologically and functionally distinct, deriving its innervation from CN X (vagus) via the pharyngeal plexus, despite being a tongue muscle — this is a classic exception worth memorising for exams."},
+      {stem:"Chronic lower motor neurone lesions of CN XII characteristically produce tongue fasciculations and atrophy on the affected side.", answer:true, exp:"TRUE. As with other LMN lesions, chronic denervation of the tongue musculature produces visible fasciculations (fine, irregular twitching) and progressive atrophy (wasting) on the affected side — important signs to look for on examination, particularly in conditions like motor neurone disease."},
+    ]},
+  ],
+  "w2s3a": [
+    {topic:"Retina to Chiasm", stems:[
+      {stem:"Light from the temporal visual field falls on the nasal portion of the retina due to the inverting properties of the lens.", answer:true, exp:"TRUE. The lens inverts and reverses the image, so light from the temporal (lateral) visual field crosses to fall on the NASAL (medial) retina, and light from the nasal visual field falls on the TEMPORAL retina. This inversion is the foundation for understanding why nasal retinal fibres carry temporal field information."},
+      {stem:"At the optic chiasm, temporal retinal fibres decussate to the contralateral side, while nasal retinal fibres remain uncrossed.", answer:false, exp:"FALSE — reversed. NASAL retinal fibres DECUSSATE at the chiasm (crossing to the opposite optic tract), while TEMPORAL retinal fibres remain UNCROSSED (ipsilateral). This is the single most important fact for understanding chiasmal lesions and the resulting bitemporal hemianopia pattern."},
+      {stem:"A lesion of the optic nerve, before it reaches the chiasm, produces a monocular visual field defect in the eye on that side only.", answer:true, exp:"TRUE. Since each optic nerve carries all the fibres (both nasal and temporal) from one eye only, a pre-chiasmal lesion affects only that eye's vision entirely, producing a unilateral/monocular defect rather than any bilateral field pattern."},
+      {stem:"The optic tract, located after the chiasm, contains fibres exclusively from the eye on the same side as the tract.", answer:false, exp:"FALSE. After the chiasm, each optic tract contains a MIX of fibres from BOTH eyes — specifically, the contralateral eye's nasal retinal fibres (which crossed) plus the ipsilateral eye's temporal retinal fibres (which did not cross). Together these carry information from the CONTRALATERAL visual field of both eyes."},
+      {stem:"Bitemporal hemianopia results from compression of the optic chiasm and classically involves loss of the temporal visual field in both eyes.", answer:true, exp:"TRUE. Central chiasmal compression (classically by a pituitary tumour expanding superiorly) damages the crossing nasal retinal fibres from both eyes, which carry information from each eye's temporal visual field — hence both temporal fields are lost, producing the classic 'tunnel vision' bitemporal hemianopia pattern."},
+    ]},
+  ],
+  "w2s3b": [
+    {topic:"Optic Radiations & Visual Cortex", stems:[
+      {stem:"Meyer's loop, which sweeps through the temporal lobe, carries fibres from the inferior retina and damage produces a contralateral superior quadrantanopia.", answer:true, exp:"TRUE. Meyer's loop carries inferior retinal fibres, which represent the SUPERIOR visual field. Temporal lobe lesions affecting this loop (surgery, tumours, strokes) produce contralateral superior quadrantanopia, classically described as 'pie in the sky'."},
+      {stem:"The dorsal (parietal) optic radiation carries fibres from the superior retina, and its damage produces a contralateral superior quadrantanopia.", answer:false, exp:"FALSE. The dorsal/parietal radiation carries SUPERIOR retinal fibres, representing the INFERIOR visual field. Damage produces a contralateral INFERIOR quadrantanopia ('pie on the floor'), not superior. This is the mirror-image pattern to Meyer's loop lesions."},
+      {stem:"Macular sparing in a posterior cerebral artery stroke occurs because the occipital pole representing central/macular vision receives collateral blood supply from the middle cerebral artery.", answer:true, exp:"TRUE. The occipital pole (representing the macula) has a dual blood supply from both the PCA and collateral branches of the MCA, providing some protection during PCA territory infarction — this explains why macular (central) vision is often preserved even when peripheral vision is lost in PCA strokes."},
+      {stem:"A lesion of the lateral geniculate nucleus produces a visual field defect that is typically less congruous (less symmetrical between the two eyes) than a lesion of the primary visual cortex.", answer:false, exp:"FALSE — actually the OPPOSITE pattern is generally true for this comparison. More posterior lesions (closer to the cortex, including LGN and especially V1 itself) tend to produce MORE congruous (symmetrical) field defects between the two eyes, while more anterior lesions (optic tract) tend to be LESS congruous, as fibre organisation becomes increasingly aligned posteriorly."},
+      {stem:"The primary visual cortex is located in the calcarine sulcus on the medial surface of the occipital lobe and corresponds to Brodmann area 17.", answer:true, exp:"TRUE. V1 (primary visual cortex, Brodmann area 17) occupies the banks of the calcarine sulcus on the medial occipital lobe surface, with a precise retinotopic map — the occipital pole represents central/macular vision, while more anterior portions represent increasingly peripheral visual fields."},
+    ]},
+  ],
+  "w2s3c": [
+    {topic:"Pupillary Light Reflex", stems:[
+      {stem:"The afferent pathway of the pupillary light reflex passes through the lateral geniculate nucleus before reaching the pretectal nucleus.", answer:false, exp:"FALSE. The pupillary light reflex afferent pathway BYPASSES the LGN entirely — fibres leave the optic tract before the LGN and travel directly to the pretectal nucleus in the midbrain. This is why patients with cortical blindness (bilateral V1 destruction, LGN/optic tract intact) can still have normal pupillary light reflexes."},
+      {stem:"Shining light into one eye normally causes constriction of both pupils equally, due to bilateral projections from the pretectal nucleus to both Edinger-Westphal nuclei.", answer:true, exp:"TRUE. This is the consensual light reflex. Each pretectal nucleus projects bilaterally to both Edinger-Westphal nuclei, meaning light stimulation of one eye produces equal constriction in both eyes — a key feature that allows for the swinging flashlight test to detect asymmetric afferent pathway disease (RAPD)."},
+      {stem:"A relative afferent pupillary defect (RAPD) is characterised by the affected eye's pupil appearing to constrict more than the normal eye when light is swung between the two eyes.", answer:false, exp:"FALSE — opposite. In RAPD, when light swings TO the affected eye, that pupil appears to PARADOXICALLY DILATE (rather than constrict as expected) because the weaker afferent signal from that eye provides less constrictive drive than the consensual relaxation effect from removing light from the healthy eye. This is the Marcus Gunn pupil phenomenon."},
+      {stem:"RAPD can be caused by chiasmal compression from a pituitary tumour affecting both optic nerves symmetrically.", answer:false, exp:"FALSE. RAPD requires ASYMMETRIC optic nerve/retinal disease between the two eyes — symmetric chiasmal compression affecting both optic nerves EQUALLY would not produce a relative afferent defect (since both sides would be equally affected, there's no 'relative' difference to detect). RAPD is most associated with unilateral optic neuritis, optic nerve compression, or severe unilateral retinal disease."},
+      {stem:"The efferent limb of the pupillary light reflex travels via parasympathetic fibres on the outer surface of CN III to the ciliary ganglion.", answer:true, exp:"TRUE. After the bilateral pretectal-to-Edinger-Westphal connections, the efferent signal travels via the parasympathetic fibres of CN III (on its superficial/outer surface) to synapse in the ciliary ganglion, then via short ciliary nerves to the sphincter pupillae for pupillary constriction."},
+    ]},
+  ],
+  "w2s4a": [
+    {topic:"Horizontal Gaze & MLF", stems:[
+      {stem:"The PPRF (paramedian pontine reticular formation) coordinates horizontal conjugate gaze by directly driving the ipsilateral CN VI nucleus and sending a signal via the MLF to the contralateral CN III nucleus.", answer:true, exp:"TRUE. The PPRF serves as the brainstem 'horizontal gaze centre' — it receives input from the contralateral frontal eye field and coordinates simultaneous activation of the ipsilateral lateral rectus (via CN VI) and contralateral medial rectus (via the MLF connection to CN III) for conjugate horizontal eye movement."},
+      {stem:"Internuclear ophthalmoplegia (INO) results from a lesion of the PPRF and characteristically produces complete loss of both abduction and adduction in the affected eye.", answer:false, exp:"FALSE. INO results from a lesion of the MLF (not the PPRF), and characteristically produces FAILURE OF ADDUCTION in the eye ipsilateral to the lesion (on attempted gaze away from the lesion side), while ABDUCTION is preserved (often with nystagmus in the abducting eye)."},
+      {stem:"Convergence is typically preserved in internuclear ophthalmoplegia, distinguishing it from a true medial rectus palsy caused by a CN III lesion.", answer:true, exp:"TRUE. This is a key distinguishing clinical feature — INO affects the conjugate horizontal gaze pathway (MLF) specifically, while convergence uses a separate near-reflex pathway that does not depend on the MLF. A patient with INO can usually still converge normally, whereas a true CN III medial rectus palsy would impair both conjugate gaze AND convergence."},
+      {stem:"Bilateral internuclear ophthalmoplegia in a young adult patient is highly suggestive of multiple sclerosis.", answer:true, exp:"TRUE. Bilateral INO, particularly in younger patients, is a classic and highly specific sign of demyelinating disease affecting the MLF bilaterally — multiple sclerosis is the leading cause in this demographic. Unilateral INO in an older patient is more often vascular in origin (brainstem stroke)."},
+      {stem:"A lesion of the PPRF causes the eyes to be unable to look toward the side opposite the lesion.", answer:false, exp:"FALSE. A PPRF lesion causes inability to look TOWARD the side of the lesion (ipsilateral horizontal gaze palsy) — since the PPRF drives gaze to its own (ipsilateral) side. Gaze away from the lesion (contralateral) typically remains intact."},
+    ]},
+  ],
+  "w2s4b": [
+    {topic:"Vertical Gaze & Parinaud's", stems:[
+      {stem:"Parinaud's syndrome is caused by compression of the dorsal midbrain and classically presents with an inability to look upward.", answer:true, exp:"TRUE. Upgaze palsy is the most characteristic feature of Parinaud's (dorsal midbrain) syndrome, typically caused by compression from a pineal gland tumour or aqueductal stenosis with resulting hydrocephalus pressing on this region."},
+      {stem:"Light-near dissociation in Parinaud's syndrome means that the pupillary near reflex is impaired while the light reflex remains intact.", answer:false, exp:"FALSE — reversed. Light-near dissociation means the LIGHT reflex is impaired/absent while the NEAR (accommodation/convergence) reflex remains relatively intact. This occurs because the dorsal midbrain compression affects the pretectal light reflex pathway while sparing the more ventrally-located near-reflex pathway."},
+      {stem:"Convergence-retraction nystagmus, seen in Parinaud's syndrome, is most prominent on attempted downgaze.", answer:false, exp:"FALSE. Convergence-retraction nystagmus in Parinaud's syndrome is most prominent on attempted UPGAZE (not downgaze) — as the patient tries to look up, co-contraction of the extraocular muscles produces simultaneous convergence and retraction of the globes."},
+      {stem:"The riMLF (rostral interstitial nucleus of the MLF) located in the midbrain functions as the vertical gaze centre, analogous to the PPRF for horizontal gaze.", answer:true, exp:"TRUE. The riMLF in the midbrain coordinates vertical and torsional eye movements, serving a role for vertical gaze similar to that of the PPRF (pons) for horizontal gaze — lesions here produce vertical gaze palsies."},
+      {stem:"Parinaud's syndrome can occur in the setting of obstructive hydrocephalus due to aqueductal compression from a posterior third ventricular mass.", answer:true, exp:"TRUE. Because the dorsal midbrain/posterior commissure lies near the cerebral aqueduct and pineal region, masses in this area (including those causing aqueductal stenosis and consequent hydrocephalus) commonly produce the classic upgaze palsy and other features of Parinaud's syndrome."},
+    ]},
+  ],
+  "w2s4c": [
+    {topic:"Vestibulo-Ocular Reflex", stems:[
+      {stem:"The vestibulo-ocular reflex (VOR) produces eye movements in the same direction as head movement to maintain visual fixation.", answer:false, exp:"FALSE. The VOR produces eye movements in the OPPOSITE direction to head movement (equal and opposite), which is precisely what allows the eyes to remain fixed on a visual target despite head motion. If eyes moved in the same direction as the head, vision would blur during head movement."},
+      {stem:"The VOR pathway uses a direct three-neurone arc that bypasses cortical processing, accounting for its extremely short latency.", answer:true, exp:"TRUE. The VOR's rapid response (under 10 milliseconds) is due to its minimal synaptic relay — from semicircular canal receptors, to vestibular nuclei, to the extraocular muscle motor nuclei (III, IV, VI) — without requiring cortical involvement, allowing for near-instantaneous compensatory eye movement."},
+      {stem:"In the caloric reflex test, irrigation of the ear with cold water produces nystagmus with the fast phase directed toward the irrigated ear.", answer:false, exp:"FALSE. Cold water irrigation produces nystagmus with the fast phase directed AWAY from the irrigated ear (slow phase toward the irrigated ear). The mnemonic COWS (Cold Opposite, Warm Same) refers to the FAST phase direction relative to the irrigated ear."},
+      {stem:"Absence of the oculocephalic reflex (doll's eye response) in a comatose patient indicates an intact brainstem.", answer:false, exp:"FALSE — opposite interpretation. ABSENCE of the doll's eye response (eyes move WITH the head rather than compensating) indicates BRAINSTEM DYSFUNCTION. PRESENCE of the doll's eye response (eyes move opposite to head movement, maintaining apparent fixation) indicates an INTACT brainstem VOR pathway."},
+      {stem:"Absent caloric responses bilaterally is one of the clinical criteria used to support a diagnosis of brain death.", answer:true, exp:"TRUE. The absence of vestibulo-ocular reflex responses to bilateral caloric stimulation is one of the standard brainstem reflex tests used in the clinical determination of brain death, reflecting complete loss of brainstem function including the VOR pathway."},
+    ]},
+  ],
+  "w2s5a": [
+    {topic:"Parasympathetic Pathway to Eye", stems:[
+      {stem:"The Edinger-Westphal nucleus provides parasympathetic preganglionic fibres that synapse in the ciliary ganglion located within the orbit.", answer:true, exp:"TRUE. Preganglionic parasympathetic fibres from the Edinger-Westphal nucleus travel with CN III to synapse in the ciliary ganglion, situated in the posterior orbit lateral to the optic nerve, before postganglionic short ciliary nerve fibres reach their targets."},
+      {stem:"Postganglionic parasympathetic fibres from the ciliary ganglion supply both the sphincter pupillae and the ciliary muscle.", answer:true, exp:"TRUE. The short ciliary nerves, carrying postganglionic parasympathetic fibres, innervate both the sphincter pupillae (causing pupillary constriction) and the ciliary muscle (causing lens shape change for accommodation) — both essential components of the near reflex triad."},
+      {stem:"The ciliary ganglion is located within the cavernous sinus, alongside the other parasympathetic ganglia of the cranial nerves.", answer:false, exp:"FALSE. The ciliary ganglion is located in the POSTERIOR ORBIT, not within the cavernous sinus. This distinguishes it from other cranial parasympathetic ganglia such as the pterygopalatine and otic ganglia, which are located in different regions of the head."},
+    ]},
+  ],
+  "w2s5b": [
+    {topic:"Sympathetic Pathway & Horner's", stems:[
+      {stem:"The sympathetic pathway to the eye involves a three-neurone chain beginning in the hypothalamus and ending with postganglionic fibres from the superior cervical ganglion.", answer:true, exp:"TRUE. This is the classic three-order neurone pathway: 1st order (hypothalamus to spinal cord T1-T2), 2nd order (spinal cord to superior cervical ganglion, passing over the lung apex), 3rd order (superior cervical ganglion to the eye via the carotid plexus)."},
+      {stem:"Horner's syndrome characteristically presents with mydriasis, ptosis, and anhidrosis on the affected side.", answer:false, exp:"FALSE. Horner's syndrome presents with MIOSIS (small pupil, not mydriasis/dilated), partial ptosis, and anhidrosis (if the lesion is at or below the level proximal to the superior cervical ganglion). The mydriasis error is a very commonly tested distractor — remember sympathetic loss causes pupillary CONSTRICTION (unopposed parasympathetic action), not dilation."},
+      {stem:"A Pancoast tumour at the lung apex can cause Horner's syndrome by damaging the second-order (preganglionic) sympathetic neurone as it passes over the apex of the lung.", answer:true, exp:"TRUE. The second-order sympathetic neurone has an anatomically vulnerable course passing directly over the pulmonary apex before reaching the superior cervical ganglion, making it susceptible to compression or invasion by an apical lung tumour (Pancoast tumour) — always consider a chest X-ray when working up new Horner's syndrome."},
+      {stem:"Anhidrosis is present in all cases of Horner's syndrome regardless of the level of the lesion along the sympathetic pathway.", answer:false, exp:"FALSE. Anhidrosis depends on the LEVEL of the lesion. Lesions proximal to (before) the point where facial sweat gland fibres branch off (which occurs around the superior cervical ganglion/external carotid distribution) will show anhidrosis. Lesions distal to this branch point (third-order, postganglionic, e.g., isolated to the internal carotid plexus) typically do NOT cause anhidrosis, since the facial sweat fibres have already diverged via the external carotid pathway."},
+      {stem:"Painful Horner's syndrome should raise suspicion for carotid artery dissection and warrants urgent vascular imaging.", answer:true, exp:"TRUE. Carotid dissection can damage the perivascular sympathetic plexus along the internal carotid artery (third-order neurone), producing a painful Horner's syndrome (often with ipsilateral neck or facial pain) — this combination is a red flag requiring urgent imaging (CTA/MRA) due to the risk of subsequent stroke from the dissection."},
+    ]},
+  ],
+  "w2s5c": [
+    {topic:"Light-Near Dissociation", stems:[
+      {stem:"Argyll Robertson pupils are classically associated with neurosyphilis and are characterised by pupils that react normally to light but poorly to accommodation.", answer:false, exp:"FALSE — reversed. Argyll Robertson pupils show the OPPOSITE pattern: they react POORLY to LIGHT but accommodate (react to near/convergence) NORMALLY — classically described as pupils that 'accommodate but do not react' (to light)."},
+      {stem:"Adie's tonic pupil is characterised by a sluggish pupillary light response and slow, tonic redilation following a near response, often associated with absent deep tendon reflexes.", answer:true, exp:"TRUE. Adie's tonic pupil results from ciliary ganglion damage, producing a pupil that responds slowly to both light and near stimuli, with characteristically slow ('tonic') redilation after near viewing. When combined with absent deep tendon reflexes, this is termed Holmes-Adie syndrome."},
+      {stem:"Light-near dissociation in Parinaud's syndrome occurs due to compression of the dorsal midbrain, sparing the pathway responsible for the near reflex.", answer:true, exp:"TRUE. Both Argyll Robertson pupils and Parinaud's syndrome can produce light-near dissociation, though via different underlying pathology (neurosyphilis-related microvascular/inflammatory damage vs direct compression respectively) — both share the anatomical principle that the near-reflex pathway runs more ventrally and is relatively spared while the dorsal light-reflex pathway is affected."},
+    ]},
+  ],
+};
+
+
+const W2_SECTIONS=[
+  {
+    id:"w2s0",title:"1. Brainstem — Midbrain, Pons, Medulla",icon:"🌳",color:"#4a9fd4",
+    subsections:[
+      {
+        id:"w2s0a",title:"Brainstem Overview & Cross-Sectional Organisation",
+        prose:"The brainstem connects the cerebrum to the spinal cord and houses the nuclei of 10 of the 12 cranial nerves (all except CN I olfactory and CN II optic, which connect directly to the cerebrum/diencephalon). It comprises three regions from superior to inferior: midbrain (mesencephalon), pons, and medulla oblongata.\n\nGeneral organising principle for cross-sections: motor nuclei lie medially, sensory nuclei lie laterally (derived from the embryonic basal and alar plates respectively). This explains the medial-to-lateral arrangement of cranial nerve nuclei at each level.",
+        image:{svgInline:"<svg viewBox=\"0 0 640 480\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#1a1a2e;font-family:sans-serif\"><text x=\"320\" y=\"22\" text-anchor=\"middle\" fill=\"#4a9fd4\" font-size=\"14\" font-weight=\"700\">Brainstem — Three Regions &amp; Cranial Nerve Nuclei</text><rect x=\"260\" y=\"40\" width=\"120\" height=\"90\" rx=\"20\" fill=\"#1a2a3a\" stroke=\"#9b72cf\" stroke-width=\"2\"/><text x=\"320\" y=\"68\" text-anchor=\"middle\" fill=\"#c090e0\" font-size=\"11\" font-weight=\"700\">MIDBRAIN</text><text x=\"320\" y=\"84\" text-anchor=\"middle\" fill=\"#a070c0\" font-size=\"9\">CN III, IV</text><text x=\"320\" y=\"98\" text-anchor=\"middle\" fill=\"#8060a0\" font-size=\"8\">Superior + Inferior</text><text x=\"320\" y=\"110\" text-anchor=\"middle\" fill=\"#8060a0\" font-size=\"8\">colliculus</text><rect x=\"230\" y=\"135\" width=\"180\" height=\"130\" rx=\"24\" fill=\"#1a2a1a\" stroke=\"#52b788\" stroke-width=\"2\"/><text x=\"320\" y=\"168\" text-anchor=\"middle\" fill=\"#70c090\" font-size=\"11\" font-weight=\"700\">PONS</text><text x=\"320\" y=\"186\" text-anchor=\"middle\" fill=\"#50a070\" font-size=\"9\">CN V, VI, VII, VIII (vestib.)</text><text x=\"320\" y=\"202\" text-anchor=\"middle\" fill=\"#3a7050\" font-size=\"8\">Largest brainstem region</text><text x=\"320\" y=\"216\" text-anchor=\"middle\" fill=\"#3a7050\" font-size=\"8\">Pontomedullary junction:</text><text x=\"320\" y=\"228\" text-anchor=\"middle\" fill=\"#3a7050\" font-size=\"8\">VI, VII, VIII exit here</text><rect x=\"250\" y=\"270\" width=\"140\" height=\"120\" rx=\"18\" fill=\"#2a1a1a\" stroke=\"#e07a5f\" stroke-width=\"2\"/><text x=\"320\" y=\"300\" text-anchor=\"middle\" fill=\"#f09060\" font-size=\"11\" font-weight=\"700\">MEDULLA</text><text x=\"320\" y=\"318\" text-anchor=\"middle\" fill=\"#d07040\" font-size=\"9\">CN VIII (cochlear),</text><text x=\"320\" y=\"332\" text-anchor=\"middle\" fill=\"#d07040\" font-size=\"9\">IX, X, XI, XII</text><text x=\"320\" y=\"350\" text-anchor=\"middle\" fill=\"#a05030\" font-size=\"8\">Pyramidal decussation</text><text x=\"320\" y=\"362\" text-anchor=\"middle\" fill=\"#a05030\" font-size=\"8\">(85-90% CST fibres cross)</text><rect x=\"270\" y=\"400\" width=\"100\" height=\"50\" rx=\"6\" fill=\"#1a1a1a\" stroke=\"#888\" stroke-width=\"1.5\"/><text x=\"320\" y=\"422\" text-anchor=\"middle\" fill=\"#aaa\" font-size=\"9\">Spinal Cord</text><text x=\"320\" y=\"436\" text-anchor=\"middle\" fill=\"#888\" font-size=\"8\">at foramen magnum</text><line x1=\"320\" y1=\"130\" x2=\"320\" y2=\"135\" stroke=\"#666\" stroke-width=\"2\"/><line x1=\"320\" y1=\"265\" x2=\"320\" y2=\"270\" stroke=\"#666\" stroke-width=\"2\"/><line x1=\"320\" y1=\"390\" x2=\"320\" y2=\"400\" stroke=\"#666\" stroke-width=\"2\"/><rect x=\"430\" y=\"60\" width=\"190\" height=\"330\" rx=\"6\" fill=\"#111122\" stroke=\"#2a2a4a\" stroke-width=\"1\"/><text x=\"525\" y=\"78\" text-anchor=\"middle\" fill=\"#8888aa\" font-size=\"10\" font-weight=\"700\">CN Nuclei by Region</text><text x=\"440\" y=\"96\" fill=\"#c090e0\" font-size=\"10\" font-weight=\"700\">Midbrain:</text><text x=\"448\" y=\"110\" fill=\"#a0a0c0\" font-size=\"9\">CN III — Oculomotor</text><text x=\"448\" y=\"123\" fill=\"#a0a0c0\" font-size=\"9\">CN IV — Trochlear</text><text x=\"440\" y=\"142\" fill=\"#70c090\" font-size=\"10\" font-weight=\"700\">Pons:</text><text x=\"448\" y=\"156\" fill=\"#a0a0c0\" font-size=\"9\">CN V — Trigeminal</text><text x=\"448\" y=\"169\" fill=\"#a0a0c0\" font-size=\"9\">CN VI — Abducens</text><text x=\"448\" y=\"182\" fill=\"#a0a0c0\" font-size=\"9\">CN VII — Facial</text><text x=\"448\" y=\"195\" fill=\"#a0a0c0\" font-size=\"9\">CN VIII — Vestibular part</text><text x=\"440\" y=\"214\" fill=\"#f09060\" font-size=\"10\" font-weight=\"700\">Medulla:</text><text x=\"448\" y=\"228\" fill=\"#a0a0c0\" font-size=\"9\">CN VIII — Cochlear part</text><text x=\"448\" y=\"241\" fill=\"#a0a0c0\" font-size=\"9\">CN IX — Glossopharyngeal</text><text x=\"448\" y=\"254\" fill=\"#a0a0c0\" font-size=\"9\">CN X — Vagus</text><text x=\"448\" y=\"267\" fill=\"#a0a0c0\" font-size=\"9\">CN XI — Accessory</text><text x=\"448\" y=\"280\" fill=\"#a0a0c0\" font-size=\"9\">CN XII — Hypoglossal</text><text x=\"440\" y=\"305\" fill=\"#f0a500\" font-size=\"9\" font-weight=\"700\">Not in brainstem:</text><text x=\"448\" y=\"319\" fill=\"#d09030\" font-size=\"9\">CN I — Olfactory (forebrain)</text><text x=\"448\" y=\"332\" fill=\"#d09030\" font-size=\"9\">CN II — Optic (diencephalon)</text><text x=\"440\" y=\"355\" fill=\"#52b788\" font-size=\"9\" font-weight=\"700\">Rule:</text><text x=\"448\" y=\"369\" fill=\"#a0a0c0\" font-size=\"8\">Motor nuclei = MEDIAL</text><text x=\"448\" y=\"381\" fill=\"#a0a0c0\" font-size=\"8\">Sensory nuclei = LATERAL</text></svg>", caption:"Custom labelled diagram for precise anatomical localisation"},
+        table:{headers:["Region","Level","CN nuclei housed","Key tracts passing through"],rows:[
+          ["Midbrain","Between thalamus and pons","CN III (oculomotor), CN IV (trochlear)","Corticospinal, corticobulbar, cerebral peduncles, substantia nigra, red nucleus"],
+          ["Pons","Between midbrain and medulla","CN V (trigeminal), CN VI (abducens), CN VII (facial), CN VIII (vestibulocochlear — vestibular part)","Corticospinal tracts, middle cerebellar peduncle, pontine nuclei"],
+          ["Medulla oblongata","Between pons and spinal cord","CN VIII (cochlear part), CN IX (glossopharyngeal), CN X (vagus), CN XI (accessory), CN XII (hypoglossal)","Pyramids (corticospinal), medial lemniscus, decussation of pyramids"],
+        ]},
+        highlight:{type:"mnemonic",title:"Which CN Nuclei Live Where — Easy Recall",content:"Midbrain = 3, 4 (think: 3+4=7, smallest brainstem region, fewest nerves)\nPons = 5, 6, 7, 8 (the middle four — largest brainstem region, most nuclei)\nMedulla = 8 (cochlear), 9, 10, 11, 12 (the last five, lowest region)\n\nCN VIII is split: vestibular part nucleus in pons, cochlear part nucleus in medulla — uniquely spans both regions."}
+      ,
+        qa:W2_QA["w2s0a"]},
+      {
+        id:"w2s0b",title:"Midbrain Cross-Section — Superior & Inferior Colliculus Levels",
+        prose:"The midbrain is divided into: tectum (roof, posterior — contains the colliculi) and tegmentum (floor, anterior — contains nuclei and tracts) plus the cerebral peduncles (most anterior, containing descending motor fibres). The cerebral aqueduct runs through the centre, connecting the 3rd and 4th ventricles.\n\nTwo classic cross-section levels are tested: the superior colliculus level (CN III) and the inferior colliculus level (CN IV).",
+        image:{svgInline:"<svg viewBox=\"0 0 640 420\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#1a1a2e;font-family:sans-serif\"><text x=\"320\" y=\"22\" text-anchor=\"middle\" fill=\"#9b72cf\" font-size=\"14\" font-weight=\"700\">Midbrain Cross-Section — Superior Colliculus Level</text><ellipse cx=\"320\" cy=\"220\" rx=\"220\" ry=\"160\" fill=\"#161628\" stroke=\"#2a2a4a\" stroke-width=\"2\"/><path d=\"M 200 100 Q 320 60 440 100 L 440 130 Q 320 95 200 130 Z\" fill=\"#2a1a3a\" stroke=\"#9b72cf\" stroke-width=\"1.5\"/><text x=\"320\" y=\"85\" text-anchor=\"middle\" fill=\"#c090e0\" font-size=\"10\" font-weight=\"700\">TECTUM (roof)</text><circle cx=\"270\" cy=\"108\" r=\"20\" fill=\"#3a2a5a\" stroke=\"#9b72cf\" stroke-width=\"1.5\"/><circle cx=\"370\" cy=\"108\" r=\"20\" fill=\"#3a2a5a\" stroke=\"#9b72cf\" stroke-width=\"1.5\"/><text x=\"320\" y=\"112\" text-anchor=\"middle\" fill=\"#d0b0e8\" font-size=\"8\">Superior colliculi</text><circle cx=\"320\" cy=\"170\" r=\"14\" fill=\"#0a1a3a\" stroke=\"#4ecdc4\" stroke-width=\"2\"/><text x=\"320\" y=\"174\" text-anchor=\"middle\" fill=\"#4ecdc4\" font-size=\"8\" font-weight=\"700\">Aqueduct</text><rect x=\"270\" y=\"195\" width=\"100\" height=\"60\" rx=\"10\" fill=\"#1a2a3a\" stroke=\"#4a9fd4\" stroke-width=\"1.5\"/><text x=\"320\" y=\"217\" text-anchor=\"middle\" fill=\"#7abfe0\" font-size=\"9\" font-weight=\"700\">TEGMENTUM</text><circle cx=\"295\" cy=\"235\" r=\"10\" fill=\"#0a3a3a\" stroke=\"#52b788\" stroke-width=\"2\"/><text x=\"295\" y=\"238\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"6\">EW</text><circle cx=\"345\" cy=\"235\" r=\"10\" fill=\"#0a3a3a\" stroke=\"#52b788\" stroke-width=\"2\"/><text x=\"345\" y=\"238\" text-anchor=\"middle\" fill=\"#fff\" font-size=\"6\">III</text><text x=\"320\" y=\"270\" fill=\"#70c090\" font-size=\"8\" text-anchor=\"middle\">CN III nucleus + Edinger-Westphal</text><circle cx=\"250\" cy=\"195\" r=\"16\" fill=\"#3a1a0a\" stroke=\"#e07a5f\" stroke-width=\"1.5\"/><text x=\"250\" y=\"198\" text-anchor=\"middle\" fill=\"#f09060\" font-size=\"7\" font-weight=\"700\">Red N.</text><circle cx=\"390\" cy=\"195\" r=\"16\" fill=\"#3a1a0a\" stroke=\"#e07a5f\" stroke-width=\"1.5\"/><text x=\"390\" y=\"198\" text-anchor=\"middle\" fill=\"#f09060\" font-size=\"7\" font-weight=\"700\">Red N.</text><ellipse cx=\"250\" cy=\"225\" rx=\"14\" ry=\"10\" fill=\"#1a1a1a\" stroke=\"#888\" stroke-width=\"1.5\"/><text x=\"250\" y=\"228\" text-anchor=\"middle\" fill=\"#aaa\" font-size=\"6.5\">Sub. nigra</text><ellipse cx=\"390\" cy=\"225\" rx=\"14\" ry=\"10\" fill=\"#1a1a1a\" stroke=\"#888\" stroke-width=\"1.5\"/><text x=\"390\" y=\"228\" text-anchor=\"middle\" fill=\"#aaa\" font-size=\"6.5\">Sub. nigra</text><path d=\"M 200 280 Q 320 310 440 280 L 440 320 Q 320 345 200 320 Z\" fill=\"#2a2a1a\" stroke=\"#e9c46a\" stroke-width=\"1.5\"/><text x=\"320\" y=\"305\" text-anchor=\"middle\" fill=\"#e9c46a\" font-size=\"10\" font-weight=\"700\">CEREBRAL PEDUNCLES</text><text x=\"320\" y=\"320\" text-anchor=\"middle\" fill=\"#c0a030\" font-size=\"8\">Corticospinal + corticobulbar tracts</text><circle cx=\"320\" cy=\"160\" r=\"8\" fill=\"#f0a500\" stroke=\"#fff\" stroke-width=\"1\"/><text x=\"320\" y=\"148\" text-anchor=\"middle\" fill=\"#f0a500\" font-size=\"14\">III</text><line x1=\"320\" y1=\"245\" x2=\"320\" y2=\"160\" stroke=\"#f0a500\" stroke-width=\"1.5\" stroke-dasharray=\"2,2\"/><text x=\"320\" y=\"138\" text-anchor=\"middle\" fill=\"#f0a500\" font-size=\"8\">CN III exits interpeduncular fossa</text><rect x=\"20\" y=\"50\" width=\"180\" height=\"100\" rx=\"5\" fill=\"#111122\" stroke=\"#2a2a4a\" stroke-width=\"1\"/><text x=\"110\" y=\"68\" text-anchor=\"middle\" fill=\"#f0a500\" font-size=\"10\" font-weight=\"700\">Weber's Syndrome</text><text x=\"28\" y=\"84\" fill=\"#a0a0c0\" font-size=\"8\">CN III nucleus + peduncle lesion:</text><text x=\"28\" y=\"98\" fill=\"#e07a5f\" font-size=\"8\">Ipsilateral CN III palsy</text><text x=\"28\" y=\"112\" fill=\"#e07a5f\" font-size=\"8\">+ Contralateral hemiplegia</text><text x=\"28\" y=\"130\" fill=\"#888\" font-size=\"7\">(CST not yet decussated)</text></svg>", caption:"Custom labelled diagram for precise anatomical localisation"},
+        table:{headers:["Level","Key structures","Function","Clinical correlation"],rows:[
+          ["Superior colliculus (CN III level)","CN III nucleus + Edinger-Westphal nucleus (parasympathetic), red nucleus, substantia nigra, cerebral peduncles","Visual reflexes (saccades, visual tracking), CN III motor + parasympathetic output (pupil constriction, accommodation)","Weber's syndrome: CN III palsy + contralateral hemiplegia (peduncle involvement). Claude's syndrome: CN III palsy + contralateral ataxia (red nucleus)."],
+            ["Inferior colliculus (CN IV level)","CN IV nucleus (trochlear), decussation of superior cerebellar peduncles, lateral lemniscus (auditory)","Auditory relay station, CN IV motor output to superior oblique","CN IV is the ONLY cranial nerve that decussates AND exits dorsally — uniquely vulnerable in midbrain trauma."],
+        ]},
+        highlight:{type:"exam",title:"CN IV — The Exception Nerve",content:"Trochlear nerve (CN IV) is unique in THREE ways:\n1. Only cranial nerve to exit the brainstem DORSALLY (posteriorly)\n2. Only cranial nerve that completely DECUSSATES (crosses to the opposite side) before exiting\n3. Has the LONGEST intracranial course of any cranial nerve\n\nThis means a LEFT CN IV nucleus lesion causes a RIGHT superior oblique palsy (contralateral), unlike all other cranial nerve nuclei which produce ipsilateral palsies. Always tested as a trap question."}
+      ,
+        qa:W2_QA["w2s0b"]},
+      {
+        id:"w2s0c",title:"Pons Cross-Section — CN V, VI, VII, VIII Nuclei",
+        prose:"The pons is the largest brainstem region and is divided into the basis pontis (anterior, contains corticospinal fibres + pontine nuclei + middle cerebellar peduncle origin) and the tegmentum (posterior, contains cranial nerve nuclei and ascending tracts).\n\nThe pontomedullary junction is a critical landmark — three cranial nerves (VI, VII, VIII) emerge here together, making this region vulnerable in cerebellopontine angle pathology.",
+        image:{svgInline:"<svg viewBox=\"0 0 640 420\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#1a1a2e;font-family:sans-serif\"><text x=\"320\" y=\"22\" text-anchor=\"middle\" fill=\"#52b788\" font-size=\"14\" font-weight=\"700\">Pons Cross-Section — CN V, VI, VII, VIII Nuclei</text><ellipse cx=\"320\" cy=\"220\" rx=\"230\" ry=\"160\" fill=\"#161628\" stroke=\"#2a2a4a\" stroke-width=\"2\"/><path d=\"M 180 280 Q 320 320 460 280 L 460 320 Q 320 350 180 320 Z\" fill=\"#1a2a3a\" stroke=\"#4a9fd4\" stroke-width=\"1.5\"/><text x=\"320\" y=\"305\" text-anchor=\"middle\" fill=\"#7abfe0\" font-size=\"10\" font-weight=\"700\">BASIS PONTIS (anterior)</text><text x=\"320\" y=\"320\" text-anchor=\"middle\" fill=\"#5a90c0\" font-size=\"8\">Corticospinal + pontine nuclei</text><text x=\"320\" y=\"332\" text-anchor=\"middle\" fill=\"#5a90c0\" font-size=\"8\">→ middle cerebellar peduncle</text><rect x=\"220\" y=\"120\" width=\"200\" height=\"140\" rx=\"20\" fill=\"#1a2a1a\" stroke=\"#52b788\" stroke-width=\"1.5\"/><text x=\"320\" y=\"142\" text-anchor=\"middle\" fill=\"#70c090\" font-size=\"10\" font-weight=\"700\">TEGMENTUM (posterior)</text><circle cx=\"270\" cy=\"170\" r=\"13\" fill=\"#0a3a2a\" stroke=\"#e9c46a\" stroke-width=\"1.5\"/><text x=\"270\" y=\"166\" text-anchor=\"middle\" fill=\"#e9c46a\" font-size=\"8\" font-weight=\"700\">V</text><text x=\"270\" y=\"190\" text-anchor=\"middle\" fill=\"#d0b060\" font-size=\"7\">Trigeminal</text><circle cx=\"320\" cy=\"165\" r=\"9\" fill=\"#0a3a3a\" stroke=\"#4ecdc4\" stroke-width=\"1.5\"/><text x=\"320\" y=\"168\" text-anchor=\"middle\" fill=\"#4ecdc4\" font-size=\"7\" font-weight=\"700\">VI</text><circle cx=\"365\" cy=\"175\" r=\"10\" fill=\"#0a3a3a\" stroke=\"#9b72cf\" stroke-width=\"1.5\"/><text x=\"365\" y=\"178\" text-anchor=\"middle\" fill=\"#9b72cf\" font-size=\"7\" font-weight=\"700\">VII</text><path d=\"M 365 165 Q 340 160 320 165\" fill=\"none\" stroke=\"#9b72cf\" stroke-width=\"1.5\" stroke-dasharray=\"2,1\"/><text x=\"320\" y=\"200\" text-anchor=\"middle\" fill=\"#b090d0\" font-size=\"7\">VII loops around VI</text><text x=\"320\" y=\"212\" text-anchor=\"middle\" fill=\"#b090d0\" font-size=\"7\">(facial colliculus)</text><circle cx=\"390\" cy=\"200\" r=\"11\" fill=\"#0a3a3a\" stroke=\"#e07a5f\" stroke-width=\"1.5\"/><text x=\"390\" y=\"203\" text-anchor=\"middle\" fill=\"#e07a5f\" font-size=\"7\" font-weight=\"700\">VIII</text><text x=\"390\" y=\"220\" text-anchor=\"middle\" fill=\"#d07050\" font-size=\"7\">Vestibular</text><ellipse cx=\"320\" cy=\"240\" rx=\"35\" ry=\"14\" fill=\"#0a1a3a\" stroke=\"#4a9fd4\" stroke-width=\"1.5\"/><text x=\"320\" y=\"244\" text-anchor=\"middle\" fill=\"#7abfe0\" font-size=\"8\">4th ventricle floor</text><rect x=\"440\" y=\"60\" width=\"180\" height=\"290\" rx=\"5\" fill=\"#111122\" stroke=\"#2a2a4a\" stroke-width=\"1\"/><text x=\"530\" y=\"78\" text-anchor=\"middle\" fill=\"#52b788\" font-size=\"10\" font-weight=\"700\">Pontomedullary Junction</text><text x=\"448\" y=\"96\" fill=\"#a0a0c0\" font-size=\"8\">CN VI, VII, VIII emerge here</text><text x=\"448\" y=\"108\" fill=\"#a0a0c0\" font-size=\"8\">medial → lateral order:</text><text x=\"458\" y=\"124\" fill=\"#4ecdc4\" font-size=\"9\" font-weight=\"700\">VI (most medial)</text><text x=\"458\" y=\"138\" fill=\"#9b72cf\" font-size=\"9\" font-weight=\"700\">VII</text><text x=\"458\" y=\"152\" fill=\"#e07a5f\" font-size=\"9\" font-weight=\"700\">VIII (most lateral)</text><text x=\"448\" y=\"175\" fill=\"#f0a500\" font-size=\"9\" font-weight=\"700\">CPA Syndrome order:</text><text x=\"458\" y=\"190\" fill=\"#a0a0c0\" font-size=\"8\">1. VIII — hearing/vertigo</text><text x=\"458\" y=\"203\" fill=\"#a0a0c0\" font-size=\"8\">2. VII — facial weakness</text><text x=\"458\" y=\"216\" fill=\"#a0a0c0\" font-size=\"8\">3. V — corneal reflex loss</text><text x=\"448\" y=\"240\" fill=\"#e9c46a\" font-size=\"9\" font-weight=\"700\">CN VI fact:</text><text x=\"458\" y=\"254\" fill=\"#a0a0c0\" font-size=\"8\">Longest subarachnoid</text><text x=\"458\" y=\"266\" fill=\"#a0a0c0\" font-size=\"8\">course = vulnerable to</text><text x=\"458\" y=\"278\" fill=\"#a0a0c0\" font-size=\"8\">raised ICP (false localising)</text></svg>", caption:"Custom labelled diagram for precise anatomical localisation"},
+        table:{headers:["Cranial nerve","Nucleus location","Exit point","Key function"],rows:[
+          ["CN V (trigeminal)","Mid-pons, large nucleus (motor + main sensory)","Lateral aspect of mid-pons","Largest cranial nerve. Motor: mastication. Sensory: face, cornea (corneal reflex afferent)"],
+          ["CN VI (abducens)","Pontomedullary junction, near midline","Pontomedullary junction (medial)","Lateral rectus — abduction. Longest subarachnoid course → vulnerable to raised ICP (false localising sign)"],
+          ["CN VII (facial)","Pontomedullary junction (loops around CN VI nucleus internally = facial colliculus)","Cerebellopontine angle (lateral to VI)","Facial expression, taste anterior 2/3 tongue, lacrimal/salivary glands, corneal reflex EFFERENT"],
+          ["CN VIII (vestibulocochlear)","Vestibular nuclei in pons; cochlear nuclei in medulla","Cerebellopontine angle (most lateral)","Hearing + balance. Acoustic neuroma arises here — compresses VII then V as it grows"],
+        ]},
+        highlight:{type:"clinical",title:"Cerebellopontine Angle (CPA) Syndrome",content:"The CPA is where CN V, VII, VIII converge near the internal acoustic meatus. Acoustic neuroma (vestibular schwannoma) is the classic CPA tumour.\n\nOrder of compression as tumour grows: CN VIII first (tinnitus, sensorineural hearing loss, vertigo) → CN VII next (facial weakness — but often LATE because facial nerve fibres are more resistant to compression) → CN V last (loss of corneal reflex — ipsilateral afferent limb affected).\n\nLarge tumours: cerebellar signs (ataxia) + raised ICP (hydrocephalus from 4th ventricle compression)."}
+      ,
+        qa:W2_QA["w2s0c"]},
+      {
+        id:"w2s0d",title:"Medulla Cross-Section — CN IX, X, XI, XII & Decussation",
+        prose:"The medulla oblongata is the most inferior brainstem segment, continuous with the spinal cord at the foramen magnum. The pyramids (anterior) contain the corticospinal tract — 85-90% of these fibres decussate at the pyramidal decussation (motor decussation), the most caudal part of the medulla.\n\nThe medial lemniscus (carrying dorsal column sensory information) also decussates here, slightly higher than the pyramids — this is the sensory decussation.",
+        image:{svgInline:"<svg viewBox=\"0 0 640 420\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#1a1a2e;font-family:sans-serif\"><text x=\"320\" y=\"22\" text-anchor=\"middle\" fill=\"#e07a5f\" font-size=\"14\" font-weight=\"700\">Medulla Cross-Section — CN IX-XII &amp; Decussation</text><ellipse cx=\"320\" cy=\"220\" rx=\"200\" ry=\"160\" fill=\"#161628\" stroke=\"#2a2a4a\" stroke-width=\"2\"/><rect x=\"250\" y=\"290\" width=\"140\" height=\"40\" rx=\"10\" fill=\"#2a1a1a\" stroke=\"#e07a5f\" stroke-width=\"2\"/><text x=\"320\" y=\"306\" text-anchor=\"middle\" fill=\"#f09060\" font-size=\"9\" font-weight=\"700\">PYRAMIDS</text><text x=\"320\" y=\"320\" text-anchor=\"middle\" fill=\"#d07040\" font-size=\"7\">Corticospinal tract</text><text x=\"320\" y=\"345\" text-anchor=\"middle\" fill=\"#e07a5f\" font-size=\"8\" font-weight=\"700\">85-90% decussate here</text><circle cx=\"220\" cy=\"270\" r=\"18\" fill=\"#1a1a1a\" stroke=\"#888\" stroke-width=\"1.5\"/><text x=\"220\" y=\"266\" text-anchor=\"middle\" fill=\"#aaa\" font-size=\"7\">Inferior</text><text x=\"220\" y=\"277\" text-anchor=\"middle\" fill=\"#aaa\" font-size=\"7\">olive</text><circle cx=\"420\" cy=\"270\" r=\"18\" fill=\"#1a1a1a\" stroke=\"#888\" stroke-width=\"1.5\"/><text x=\"420\" y=\"266\" text-anchor=\"middle\" fill=\"#aaa\" font-size=\"7\">Inferior</text><text x=\"420\" y=\"277\" text-anchor=\"middle\" fill=\"#aaa\" font-size=\"7\">olive</text><rect x=\"270\" y=\"160\" width=\"100\" height=\"60\" rx=\"10\" fill=\"#1a1a2a\" stroke=\"#9b72cf\" stroke-width=\"1.5\"/><text x=\"320\" y=\"180\" text-anchor=\"middle\" fill=\"#c090e0\" font-size=\"8\" font-weight=\"700\">Nucleus</text><text x=\"320\" y=\"192\" text-anchor=\"middle\" fill=\"#c090e0\" font-size=\"8\" font-weight=\"700\">ambiguus</text><text x=\"320\" y=\"206\" text-anchor=\"middle\" fill=\"#a070c0\" font-size=\"7\">CN IX, X, XI motor</text><circle cx=\"230\" cy=\"195\" r=\"14\" fill=\"#0a1a3a\" stroke=\"#4a9fd4\" stroke-width=\"1.5\"/><text x=\"230\" y=\"198\" text-anchor=\"middle\" fill=\"#7abfe0\" font-size=\"7\" font-weight=\"700\">Sp.V</text><text x=\"230\" y=\"215\" text-anchor=\"middle\" fill=\"#5a90c0\" font-size=\"6.5\">Trigeminal sp. tract</text><circle cx=\"320\" cy=\"130\" r=\"13\" fill=\"#0a3a2a\" stroke=\"#52b788\" stroke-width=\"1.5\"/><text x=\"320\" y=\"126\" text-anchor=\"middle\" fill=\"#70c090\" font-size=\"6.5\">Solitary</text><text x=\"320\" y=\"136\" text-anchor=\"middle\" fill=\"#70c090\" font-size=\"6.5\">nucleus</text><circle cx=\"370\" cy=\"150\" r=\"11\" fill=\"#0a3a3a\" stroke=\"#e9c46a\" stroke-width=\"1.5\"/><text x=\"370\" y=\"146\" text-anchor=\"middle\" fill=\"#e9c46a\" font-size=\"6\">DMV</text><text x=\"370\" y=\"166\" text-anchor=\"middle\" fill=\"#c0a030\" font-size=\"6\">CN X parasymp.</text><circle cx=\"300\" cy=\"245\" r=\"11\" fill=\"#0a2a3a\" stroke=\"#a8dadc\" stroke-width=\"1.5\"/><text x=\"300\" y=\"248\" text-anchor=\"middle\" fill=\"#a8dadc\" font-size=\"6.5\" font-weight=\"700\">XII</text><circle cx=\"200\" cy=\"220\" r=\"10\" fill=\"#1a0a2a\" stroke=\"#9b72cf\" stroke-width=\"1.5\"/><text x=\"200\" y=\"223\" text-anchor=\"middle\" fill=\"#9b72cf\" font-size=\"6\">ML</text><text x=\"200\" y=\"236\" text-anchor=\"middle\" fill=\"#7050a0\" font-size=\"6\">Medial lemniscus</text><rect x=\"440\" y=\"50\" width=\"180\" height=\"300\" rx=\"5\" fill=\"#111122\" stroke=\"#2a2a4a\" stroke-width=\"1\"/><text x=\"530\" y=\"68\" text-anchor=\"middle\" fill=\"#e07a5f\" font-size=\"10\" font-weight=\"700\">Medial vs Lateral Syndrome</text><text x=\"448\" y=\"88\" fill=\"#4a9fd4\" font-size=\"9\" font-weight=\"700\">MEDIAL (paramedian a.):</text><text x=\"458\" y=\"102\" fill=\"#a0a0c0\" font-size=\"7.5\">• Contralateral hemiplegia</text><text x=\"458\" y=\"114\" fill=\"#a0a0c0\" font-size=\"7.5\">• Contralat. proprioception loss</text><text x=\"458\" y=\"126\" fill=\"#a0a0c0\" font-size=\"7.5\">• Ipsilateral tongue weakness</text><text x=\"448\" y=\"148\" fill=\"#e07a5f\" font-size=\"9\" font-weight=\"700\">LATERAL — Wallenberg (PICA):</text><text x=\"458\" y=\"162\" fill=\"#a0a0c0\" font-size=\"7.5\">• NO weakness (pyramids spared)</text><text x=\"458\" y=\"174\" fill=\"#a0a0c0\" font-size=\"7.5\">• Ipsilateral facial pain/temp loss</text><text x=\"458\" y=\"186\" fill=\"#a0a0c0\" font-size=\"7.5\">• Contralat. body pain/temp loss</text><text x=\"458\" y=\"198\" fill=\"#a0a0c0\" font-size=\"7.5\">• Ipsilateral Horner's</text><text x=\"458\" y=\"210\" fill=\"#a0a0c0\" font-size=\"7.5\">• Dysphagia, hoarseness</text><text x=\"458\" y=\"222\" fill=\"#a0a0c0\" font-size=\"7.5\">• Vertigo, ataxia</text><text x=\"448\" y=\"245\" fill=\"#52b788\" font-size=\"9\" font-weight=\"700\">Nuclei present here:</text><text x=\"458\" y=\"259\" fill=\"#a0a0c0\" font-size=\"7.5\">Nucleus ambiguus (IX,X,XI)</text><text x=\"458\" y=\"271\" fill=\"#a0a0c0\" font-size=\"7.5\">Spinal trigeminal nucleus (V)</text><text x=\"458\" y=\"283\" fill=\"#a0a0c0\" font-size=\"7.5\">Nucleus solitarius (VII,IX,X)</text><text x=\"458\" y=\"295\" fill=\"#a0a0c0\" font-size=\"7.5\">Dorsal motor nucleus vagus (X)</text><text x=\"458\" y=\"307\" fill=\"#a0a0c0\" font-size=\"7.5\">CN XII nucleus</text></svg>", caption:"Custom labelled diagram for precise anatomical localisation"},
+        table:{headers:["Structure","Location","Function","Lesion syndrome"],rows:[
+          ["Pyramids","Anterior medulla","Corticospinal tract (85-90% decussate here)","Medial medullary syndrome: contralateral hemiplegia (pyramid), contralateral loss of proprioception/vibration (medial lemniscus), ipsilateral tongue weakness (CN XII)"],
+          ["Inferior olivary nucleus","Lateral to pyramids","Relays to cerebellum (olivocerebellar tract) — motor learning/coordination","—"],
+          ["Nucleus ambiguus","Deep, central","Motor nucleus for CN IX, X, XI (pharynx, larynx, soft palate)","Bilateral lesion → bulbar palsy (dysphagia, dysarthria, dysphonia)"],
+          ["Spinal trigeminal nucleus + tract","Posterolateral, continues down from pons","Pain/temperature from face (CN V)","Lateral medullary (Wallenberg) syndrome: ipsilateral facial pain/temp loss"],
+          ["Nucleus solitarius","Posterior, near 4th ventricle floor","Visceral sensory + taste (CN VII, IX, X)","—"],
+          ["Dorsal motor nucleus of vagus","Posterior, floor of 4th ventricle","Parasympathetic output to thoracic/abdominal viscera (CN X)","—"],
+        ]},
+        highlight:{type:"exam",title:"Medial vs Lateral Medullary Syndrome — Don't Confuse Them",content:"MEDIAL medullary syndrome (anterior spinal artery / vertebral artery occlusion): affects PYRAMID + MEDIAL LEMNISCUS + CN XII. Produces: contralateral hemiplegia, contralateral loss of proprioception/vibration, ipsilateral tongue deviation. NO sensory loss to pain/temp, NO Horner's.\n\nLATERAL medullary syndrome / Wallenberg (PICA occlusion): affects spinothalamic tract, spinal trigeminal nucleus, nucleus ambiguus, vestibular nuclei, sympathetic fibres, inferior cerebellar peduncle. Produces: crossed sensory loss, dysphagia, vertigo, ataxia, Horner's. NO WEAKNESS (pyramids are anterior, spared).\n\nThe key differentiator: weakness present = medial; no weakness but crossed sensory loss = lateral."}
+      ,
+        qa:W2_QA["w2s0d"]}
+    ]
+  },
+  {
+    id:"w2s1",title:"2. Cranial Nerves I–VI — Origin, Course & Distribution",icon:"🧵",color:"#52b788",
+    subsections:[
+      {
+        id:"w2s1a",title:"CN I (Olfactory) & CN II (Optic)",
+        prose:"These two cranial nerves are unique — they are technically extensions of the CNS (forebrain), not true peripheral nerves, and are NOT covered by Schwann cells (myelinated by oligodendrocytes instead, like CNS white matter). This is why they cannot regenerate after injury the way other cranial nerves can, and explains why optic nerve damage behaves like CNS white matter damage (e.g., optic neuritis in MS).",
+        table:{headers:["Nerve","Origin","Course","Function","Key clinical point"],rows:[
+          ["CN I — Olfactory","Olfactory epithelium (bipolar neurones) in superior nasal cavity","Filaments through cribriform plate → olfactory bulb → olfactory tract → primary olfactory cortex (uncus, piriform cortex) — NO THALAMIC RELAY","Smell","Anosmia after head trauma (shearing at cribriform plate). Only sensory pathway that bypasses the thalamus before reaching cortex. Olfactory neurones regenerate from basal stem cells throughout life."],
+          ["CN II — Optic","Retinal ganglion cells","Optic nerve → optic canal → optic chiasm (nasal fibres decussate) → optic tract → LGN → optic radiations → V1","Vision","Technically a CNS tract, not a true nerve. Optic neuritis (MS) causes pain on eye movement + RAPD. Papilloedema = optic disc swelling from raised ICP."],
+        ]},
+        highlight:{type:"exam",title:"Why CN I & II Don't Regenerate Like Other Cranial Nerves",content:"CN III-XII are true peripheral nerves — myelinated by SCHWANN CELLS, capable of regeneration after injury (Wallerian degeneration followed by regrowth).\n\nCN I and CN II are CNS extensions — myelinated by OLIGODENDROCYTES, like brain white matter. They do NOT regenerate after significant injury, behaving like the rest of the CNS (poor regenerative capacity).\n\nException: olfactory RECEPTOR neurones themselves regenerate from basal stem cells in the olfactory epithelium throughout life — but if the central axons are sheared at the cribriform plate, the new neurones cannot find their way back to the bulb if scarring has occurred."}
+      ,
+        qa:W2_QA["w2s1a"]},
+      {
+        id:"w2s1b",title:"CN III (Oculomotor) — The Eye Movement Workhorse",
+        prose:"CN III is the most important cranial nerve for ophthalmology — it innervates 4 of the 6 extraocular muscles, the levator palpebrae superioris (eyelid elevation), and carries parasympathetic fibres for pupil constriction and accommodation.",
+        image:{svgInline:"<svg viewBox=\"0 0 640 460\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#1a1a2e;font-family:sans-serif\"><text x=\"320\" y=\"22\" text-anchor=\"middle\" fill=\"#52b788\" font-size=\"14\" font-weight=\"700\">CN III (Oculomotor) — Course &amp; Distribution</text><circle cx=\"320\" cy=\"80\" r=\"28\" fill=\"#1a2a3a\" stroke=\"#9b72cf\" stroke-width=\"2\"/><text x=\"320\" y=\"76\" text-anchor=\"middle\" fill=\"#c090e0\" font-size=\"8\" font-weight=\"700\">Midbrain</text><text x=\"320\" y=\"88\" text-anchor=\"middle\" fill=\"#c090e0\" font-size=\"8\">CN III nucl.</text><circle cx=\"320\" cy=\"80\" r=\"10\" fill=\"#0a3a2a\" stroke=\"#52b788\" stroke-width=\"1.5\"/><text x=\"320\" y=\"83\" text-anchor=\"middle\" fill=\"#52b788\" font-size=\"6\" font-weight=\"700\">E-W</text><line x1=\"320\" y1=\"108\" x2=\"320\" y2=\"150\" stroke=\"#52b788\" stroke-width=\"4\"/><text x=\"350\" y=\"130\" fill=\"#52b788\" font-size=\"8\">Interpeduncular fossa</text><rect x=\"270\" y=\"150\" width=\"100\" height=\"30\" rx=\"6\" fill=\"#1a1a2a\" stroke=\"#e9c46a\" stroke-width=\"1.5\"/><text x=\"320\" y=\"169\" text-anchor=\"middle\" fill=\"#e9c46a\" font-size=\"8\" font-weight=\"700\">Between PCA &amp; SCA</text><line x1=\"320\" y1=\"180\" x2=\"320\" y2=\"220\" stroke=\"#52b788\" stroke-width=\"4\"/><rect x=\"240\" y=\"220\" width=\"160\" height=\"45\" rx=\"8\" fill=\"#1a0a2a\" stroke=\"#9b72cf\" stroke-width=\"2\"/><text x=\"320\" y=\"240\" text-anchor=\"middle\" fill=\"#c090e0\" font-size=\"9\" font-weight=\"700\">Cavernous sinus</text><text x=\"320\" y=\"254\" text-anchor=\"middle\" fill=\"#a070c0\" font-size=\"7\">lateral wall</text><line x1=\"320\" y1=\"265\" x2=\"320\" y2=\"295\" stroke=\"#52b788\" stroke-width=\"4\"/><rect x=\"260\" y=\"295\" width=\"120\" height=\"28\" rx=\"6\" fill=\"#1a2a3a\" stroke=\"#4ecdc4\" stroke-width=\"1.5\"/><text x=\"320\" y=\"313\" text-anchor=\"middle\" fill=\"#4ecdc4\" font-size=\"8\" font-weight=\"700\">Superior orbital fissure</text><line x1=\"290\" y1=\"323\" x2=\"220\" y2=\"360\" stroke=\"#52b788\" stroke-width=\"3\"/><line x1=\"350\" y1=\"323\" x2=\"420\" y2=\"360\" stroke=\"#52b788\" stroke-width=\"3\"/><rect x=\"130\" y=\"360\" width=\"180\" height=\"80\" rx=\"6\" fill=\"#0a2a1a\" stroke=\"#52b788\" stroke-width=\"1.5\"/><text x=\"220\" y=\"378\" text-anchor=\"middle\" fill=\"#70c090\" font-size=\"9\" font-weight=\"700\">Superior division</text><text x=\"140\" y=\"394\" fill=\"#a0a0c0\" font-size=\"8\">• Superior rectus</text><text x=\"140\" y=\"408\" fill=\"#a0a0c0\" font-size=\"8\">  (elevation)</text><text x=\"140\" y=\"424\" fill=\"#a0a0c0\" font-size=\"8\">• Levator palpebrae</text><text x=\"140\" y=\"436\" fill=\"#a0a0c0\" font-size=\"8\">  (eyelid elevation)</text><rect x=\"330\" y=\"360\" width=\"180\" height=\"95\" rx=\"6\" fill=\"#0a2a1a\" stroke=\"#52b788\" stroke-width=\"1.5\"/><text x=\"420\" y=\"378\" text-anchor=\"middle\" fill=\"#70c090\" font-size=\"9\" font-weight=\"700\">Inferior division</text><text x=\"340\" y=\"394\" fill=\"#a0a0c0\" font-size=\"8\">• Medial rectus (adduction)</text><text x=\"340\" y=\"408\" fill=\"#a0a0c0\" font-size=\"8\">• Inferior rectus (depression)</text><text x=\"340\" y=\"422\" fill=\"#a0a0c0\" font-size=\"8\">• Inferior oblique (extorsion)</text><text x=\"340\" y=\"438\" fill=\"#f0a500\" font-size=\"8\" font-weight=\"700\">• Parasympathetic→ciliary gangl.</text><rect x=\"20\" y=\"40\" width=\"195\" height=\"320\" rx=\"5\" fill=\"#111122\" stroke=\"#2a2a4a\" stroke-width=\"1\"/><text x=\"117\" y=\"58\" text-anchor=\"middle\" fill=\"#f0a500\" font-size=\"10\" font-weight=\"700\">⚠ Pupil-Sparing vs Involving</text><text x=\"28\" y=\"78\" fill=\"#52b788\" font-size=\"9\" font-weight=\"700\">Compressive (aneurysm):</text><text x=\"38\" y=\"92\" fill=\"#a0a0c0\" font-size=\"7.5\">Pupil fibres SUPERFICIAL</text><text x=\"38\" y=\"104\" fill=\"#a0a0c0\" font-size=\"7.5\">= compressed FIRST</text><text x=\"38\" y=\"118\" fill=\"#e07a5f\" font-size=\"8\" font-weight=\"700\">→ PUPIL INVOLVED (dilated)</text><text x=\"38\" y=\"132\" fill=\"#e07a5f\" font-size=\"8\" font-weight=\"700\">= EMERGENCY</text><text x=\"28\" y=\"154\" fill=\"#4a9fd4\" font-size=\"9\" font-weight=\"700\">Ischaemic (diabetic):</text><text x=\"38\" y=\"168\" fill=\"#a0a0c0\" font-size=\"7.5\">Core vasa nervorum affected</text><text x=\"38\" y=\"180\" fill=\"#a0a0c0\" font-size=\"7.5\">= peripheral fibres spared</text><text x=\"38\" y=\"194\" fill=\"#52b788\" font-size=\"8\" font-weight=\"700\">→ PUPIL SPARED</text><text x=\"28\" y=\"220\" fill=\"#9b72cf\" font-size=\"9\" font-weight=\"700\">Complete CN III palsy:</text><text x=\"38\" y=\"234\" fill=\"#a0a0c0\" font-size=\"7.5\">\"Down and out\" eye</text><text x=\"38\" y=\"246\" fill=\"#a0a0c0\" font-size=\"7.5\">Ptosis</text><text x=\"38\" y=\"258\" fill=\"#a0a0c0\" font-size=\"7.5\">Mydriasis (if pupil involved)</text><text x=\"38\" y=\"270\" fill=\"#a0a0c0\" font-size=\"7.5\">Loss of accommodation</text></svg>", caption:"Custom labelled diagram for precise anatomical localisation"},
+        table:{headers:["Component","Detail"],rows:[
+          ["Nucleus","Midbrain, superior colliculus level (paired CN III nucleus + midline unpaired Edinger-Westphal nucleus for parasympathetics)"],
+          ["Exit from brainstem","Interpeduncular fossa (between the two cerebral peduncles) — ANTERIOR exit, unlike CN IV"],
+          ["Course","Passes between PCA and SCA (vulnerable to uncal herniation here) → lateral wall of cavernous sinus → superior orbital fissure → divides into superior and inferior divisions"],
+          ["Motor — Superior division","Superior rectus (elevation), levator palpebrae superioris (eyelid elevation)"],
+          ["Motor — Inferior division","Medial rectus (adduction), inferior rectus (depression), inferior oblique (extorsion + elevation when adducted)"],
+          ["Parasympathetic","Edinger-Westphal nucleus → travels on OUTER surface of CN III → ciliary ganglion → short ciliary nerves → sphincter pupillae (constriction) + ciliary muscle (accommodation)"],
+        ]},
+        highlight:{type:"exam",title:"Complete CN III Palsy — Clinical Picture",content:"'Down and out' eye position: unopposed action of lateral rectus (CN VI) and superior oblique (CN IV) — eye deviates laterally and inferiorly.\n\nPtosis: levator palpebrae superioris paralysed.\n\nMydriasis (if pupil involved): dilated, fixed pupil — parasympathetic fibres affected.\n\nLoss of accommodation: ciliary muscle paralysed.\n\nPUPIL-INVOLVING vs PUPIL-SPARING is the single most important clinical distinction (see Week 1 PComm aneurysm notes) — compressive (surgical) causes affect the pupil first because parasympathetic fibres run superficially on the nerve; ischaemic (medical/diabetic) causes spare the pupil because they affect the core of the nerve first."}
+      ,
+        qa:W2_QA["w2s1b"]},
+      {
+        id:"w2s1c",title:"CN IV (Trochlear) & CN VI (Abducens)",
+        prose:"These two nerves work alongside CN III to achieve full range of eye movement, each controlling a single extraocular muscle.",
+        table:{headers:["Nerve","Muscle supplied","Action","Nucleus location","Unique features"],rows:[
+          ["CN IV — Trochlear","Superior oblique","Depression (most effective when eye ADDUCTED) + intorsion + slight abduction","Inferior colliculus level, midbrain","Only CN to exit DORSALLY. Only CN that fully DECUSSATES. Longest intracranial course → most vulnerable to head trauma."],
+          ["CN VI — Abducens","Lateral rectus","Abduction (pure abductor — only one action)","Pontomedullary junction, near midline","Longest SUBARACHNOID course of any CN → most vulnerable to raised ICP (stretches over petrous ridge) → classic FALSE LOCALISING SIGN."],
+        ]},
+        highlight:{type:"exam",title:"CN VI Palsy as a False Localising Sign",content:"Raised intracranial pressure (from ANY cause — tumour, hydrocephalus, idiopathic intracranial hypertension) can stretch CN VI as it travels over the petrous temporal ridge, causing a CN VI palsy (failure of abduction, horizontal diplopia worse at distance) WITHOUT any lesion actually affecting the nerve's pathway directly.\n\nThis is called a 'false localising sign' because the CN VI palsy does NOT indicate the location of the underlying pathology — it's a non-specific marker of raised ICP from anywhere in the cranium. Always check for papilloedema and other ICP signs when CN VI palsy is found."},
+        draw:{title:"DRAW THIS: Superior Oblique Action Test",content:"Draw an eye in 3 positions: primary gaze, adducted, abducted.\n\nIn ADDUCTION: superior oblique becomes the primary depressor (its tendon angle through the trochlea aligns with the visual axis) — this is why you test CN IV by asking the patient to look DOWN AND IN.\n\nIn ABDUCTION: superior rectus is the primary elevator, inferior rectus the primary depressor (their visual axis aligns with their anatomical axis).\n\nThis is THE single most tested concept regarding extraocular muscle actions — write it from memory until automatic."}
+      ,
+        qa:W2_QA["w2s1c"]}
+    ]
+  },
+  {
+    id:"w2s2",title:"3. Cranial Nerves VII–XII — Origin, Course & Distribution",icon:"🔗",color:"#9b72cf",
+    subsections:[
+      {
+        id:"w2s2a",title:"CN VII (Facial Nerve) — The Complex One",
+        prose:"CN VII has the most complex course of any cranial nerve, carrying four different fibre types (motor, parasympathetic ×2, taste) through a tortuous path within the temporal bone before exiting at the stylomastoid foramen.",
+        table:{headers:["Component","Detail"],rows:[
+          ["Nucleus","Pontomedullary junction (loops around CN VI nucleus internally, creating the facial colliculus bulge in the 4th ventricle floor)"],
+          ["Exit from brainstem","Cerebellopontine angle (medial to CN VIII)"],
+          ["Intratemporal course","Internal acoustic meatus → facial canal (makes a sharp bend at the geniculate ganglion — gives off greater petrosal nerve here) → exits stylomastoid foramen"],
+          ["Motor (main trunk)","Muscles of facial expression (orbicularis oculi, orbicularis oris, buccinator, frontalis, etc.), stapedius, stylohyoid, posterior belly digastric"],
+          ["Parasympathetic — greater petrosal nerve","Lacrimal gland (via pterygopalatine ganglion) + nasal/palatine glands"],
+          ["Parasympathetic — chorda tympani","Submandibular + sublingual glands (via submandibular ganglion)"],
+          ["Taste — chorda tympani","Anterior 2/3 of tongue"],
+          ["Corneal reflex","CN VII is the EFFERENT (motor) limb — orbicularis oculi closure. CN V1 is the AFFERENT limb."],
+        ]},
+        highlight:{type:"exam",title:"UMN vs LMN Facial Palsy — Critical Distinction",content:"LMN facial palsy (Bell's palsy, CPA tumour, facial nerve trauma): affects ENTIRE ipsilateral face — both upper (forehead/eye closure) and lower face. Patient CANNOT raise eyebrow or close eye on affected side.\n\nUMN facial palsy (stroke, internal capsule lesion): SPARES the forehead — patient CAN raise eyebrow and close eye, but lower face is weak. This is because the upper face has BILATERAL cortical representation (each side receives input from both hemispheres) while the lower face has only CONTRALATERAL representation.\n\nClinical rule: 'Forehead sparing = UMN/central = stroke until proven otherwise. Forehead involved = LMN/peripheral = Bell's palsy or structural lesion.'"}
+      ,
+        qa:W2_QA["w2s2a"]},
+      {
+        id:"w2s2b",title:"CN VIII (Vestibulocochlear), CN IX (Glossopharyngeal), CN X (Vagus)",
+        prose:"CN VIII has no motor component — purely sensory (special senses: hearing + balance). CN IX and X share overlapping function in the pharynx and are tested together.",
+        table:{headers:["Nerve","Components","Course","Key clinical correlations"],rows:[
+          ["CN VIII — Vestibulocochlear","Cochlear division (hearing) + vestibular division (balance) — both purely sensory","Internal acoustic meatus → cerebellopontine angle → brainstem (cochlear nuclei in medulla, vestibular nuclei in pons)","Acoustic neuroma arises from vestibular Schwann cells (not cochlear) but presents with hearing loss as cochlear fibres are compressed first due to anatomical position"],
+          ["CN IX — Glossopharyngeal","Motor: stylopharyngeus only. Parasympathetic: parotid gland (via otic ganglion). Sensory: posterior 1/3 tongue (taste + general), pharynx, carotid body/sinus (baroreceptor/chemoreceptor afferent)","Jugular foramen (pars nervosa) → stylopharyngeus → pharyngeal branches","Gag reflex AFFERENT limb (CN X is efferent). Glossopharyngeal neuralgia: severe throat pain triggered by swallowing."],
+          ["CN X — Vagus","Motor: pharynx, larynx, soft palate (via nucleus ambiguus) + parasympathetic to thoracic/abdominal viscera (via dorsal motor nucleus)","Jugular foramen (pars vascularis) → carotid sheath → recurrent laryngeal nerve loops under aortic arch (left) / subclavian artery (right) → returns to larynx","Recurrent laryngeal nerve palsy → hoarseness (vocal cord paralysis). Left RLN longer course = more vulnerable (mediastinal pathology, aortic aneurysm). Gag reflex EFFERENT limb."],
+        ]},
+        highlight:{type:"clinical",title:"Jugular Foramen Syndrome (Vernet's Syndrome)",content:"CN IX, X, XI all exit through the jugular foramen together. A lesion here (glomus jugulare tumour, schwannoma, skull base metastasis) produces combined palsy:\n\nCN IX: loss of gag reflex (afferent), loss of posterior tongue taste/sensation\nCN X: hoarseness, dysphagia, palatal droop (uvula deviates AWAY from lesion side — pulled by intact contralateral muscles)\nCN XI: weakness of sternocleidomastoid + trapezius (shoulder droop, difficulty turning head away from lesion)\n\nIf CN XII (hypoglossal canal, separate foramen) is also affected — termed Collet-Sikard syndrome — suggests a more extensive skull base lesion."}
+      ,
+        qa:W2_QA["w2s2b"]},
+      {
+        id:"w2s2c",title:"CN XI (Accessory) & CN XII (Hypoglossal)",
+        prose:"The final two cranial nerves — CN XI is unique for having both a cranial and spinal origin, while CN XII is purely motor to the tongue.",
+        table:{headers:["Nerve","Origin","Course","Function","Lesion sign"],rows:[
+          ["CN XI — Accessory","Cranial root (medulla, joins X briefly) + Spinal root (C1-C5 spinal cord, ascends through foramen magnum)","Spinal root ascends through foramen magnum → joins cranial root briefly → both exit jugular foramen → cranial root joins vagus; spinal root continues to muscles","Sternocleidomastoid (head rotation to OPPOSITE side) + trapezius (shoulder shrug, scapular stabilisation)","Weakness turning head AWAY from lesion side (SCM acts to turn head contralaterally, so a lesion impairs turning to the opposite side). Shoulder droop on lesion side (trapezius)."],
+          ["CN XII — Hypoglossal","Medulla, between pyramid and olive","Hypoglossal canal → courses through neck → enters tongue musculature","All intrinsic + most extrinsic tongue muscles (genioglossus, hyoglossus, styloglossus) EXCEPT palatoglossus (innervated by CN X)","LMN lesion: tongue deviates TOWARD lesion side on protrusion (genioglossus normally pushes tongue contralaterally — weakness on one side lets the other push it that way). Tongue atrophy/fasciculations in chronic LMN lesions."],
+        ]},
+        highlight:{type:"mnemonic",title:"Tongue & Palate Deviation — Don't Mix Them Up",content:"TONGUE (CN XII, genioglossus): deviates TOWARD the side of the LMN lesion when protruded.\n\nUVULA/PALATE (CN X): deviates AWAY from the side of the lesion (pulled up by the intact contralateral levator veli palatini).\n\nSimple memory device: 'Tongue points to the problem, uvula points away from the problem.'"}
+      ,
+        qa:W2_QA["w2s2c"]}
+    ]
+  },
+  {
+    id:"w2s3",title:"4. Visual Pathways — Complete Pathway & Lesion Localisation",icon:"👁️",color:"#e07a5f",
+    subsections:[
+      {
+        id:"w2s3a",title:"Retina to Optic Chiasm",
+        prose:"The visual pathway begins at the retina and the precise arrangement of crossing vs non-crossing fibres at the chiasm is the single most important concept for localising visual field defects — and one of the highest-yield topics in the entire MEDEX syllabus.",
+        src:"https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260407.195030/resources/742c8b4c048039b111f794d87164cc0a16302032",
+          caption:"<strong>OpenStax Anatomy &amp; Physiology 2e, Fig 16.8</strong> — Pituitary tumour compressing the optic chiasm from below. The crossing nasal fibres (carrying temporal field information) are compressed first, producing bitemporal hemianopia ('tunnel vision'). (CC BY 4.0)",
+        image2:{src:"https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260407.195030/resources/742c8b4c048039b111f794d87164cc0a16302032", caption:"<strong>OpenStax Anatomy &amp; Physiology 2e, Figure 16.8 — Pituitary Tumour</strong> — The pituitary gland sits in the sella turcica, immediately inferior to the optic chiasm. A pituitary tumour presses against the crossing (decussating) fibres in the chiasm, which carry peripheral visual information to the opposite side of the brain — producing 'tunnel vision' (bitemporal hemianopia). (CC BY 4.0)"},
+        table:{headers:["Structure","Key anatomy","Clinical relevance"],rows:[
+          ["Retina","Light from the TEMPORAL visual field hits the NASAL retina (image inversion by the lens). Light from the NASAL visual field hits the TEMPORAL retina.","This inversion is why nasal retinal fibres carry temporal field information — critical for understanding chiasmal lesions"],
+          ["Optic nerve (CN II)","Each optic nerve carries fibres from ONE eye only (both nasal and temporal retinal fibres of that eye)","A lesion here causes MONOCULAR vision loss in that eye only"],
+          ["Optic chiasm","NASAL retinal fibres DECUSSATE (cross to opposite side). TEMPORAL retinal fibres remain UNCROSSED (ipsilateral).","Compression here (classically pituitary tumour from below, craniopharyngioma from above) → BITEMPORAL HEMIANOPIA"],
+          ["Optic tract","Now contains fibres from BOTH eyes, specifically: contralateral nasal retina + ipsilateral temporal retina = information from the CONTRALATERAL visual field","A lesion here causes CONTRALATERAL HOMONYMOUS HEMIANOPIA (same side field loss in both eyes)"],
+        ]},
+        highlight:{type:"exam",title:"The Golden Rule of Visual Field Defects",content:"BEFORE the chiasm (optic nerve): MONOCULAR defects (one eye only affected)\n\nAT the chiasm (central compression): BITEMPORAL defects (both temporal fields — 'tunnel vision')\n\nAFTER the chiasm (optic tract, radiations, cortex): HOMONYMOUS defects (same-sided field in both eyes, CONTRALATERAL to the lesion)\n\nThis three-tier rule resolves the vast majority of visual field MEDEX questions instantly. Always ask: is this defect monocular, bitemporal, or homonymous? That tells you exactly where the lesion sits relative to the chiasm."}
+      ,
+        qa:W2_QA["w2s3a"]},
+      {
+        id:"w2s3b",title:"Optic Tract to Visual Cortex — Radiations & Lesion Sites",
+        prose:"After the optic tract, visual information passes through the lateral geniculate nucleus (LGN) of the thalamus — the obligatory relay station for conscious vision (though a small subset of fibres bypass the LGN to the superior colliculus for reflexive eye movements and pupillary responses).\n\nFrom the LGN, fibres split into two radiations on their way to the primary visual cortex — this split is the basis for the classic quadrantanopia patterns.",
+        image2:{src:"https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260407.195030/resources/7e11ca9431a2577ebe6f50a26e036159e9578eca", caption:"<strong>OpenStax Anatomy &amp; Physiology 2e, Figure 12.5 — Optic Nerve vs Optic Tract</strong> — Superior view showing how the same retinal ganglion cell axons are called the 'optic nerve' before the chiasm (PNS terminology) and the 'optic tract' after it (CNS terminology). The chiasm marks the precise anatomical boundary between peripheral and central nervous system. (CC BY 4.0)"},
+        table:{headers:["Pathway segment","Course","Fibres carried","Lesion → defect"],rows:[
+          ["Lateral geniculate nucleus (LGN)","Thalamus — 6-layered structure, receives ipsilateral temporal + contralateral nasal fibres","Both eyes' contralateral visual field","Contralateral homonymous hemianopia, often MORE congruous (symmetrical) than optic tract lesions"],
+          ["Meyer's loop (inferior/temporal radiation)","Sweeps anteriorly into the temporal lobe before curving posteriorly to reach V1","Inferior retinal fibres = SUPERIOR visual field","Contralateral SUPERIOR quadrantanopia ('pie in the sky'). Classic in temporal lobe surgery/tumours/strokes."],
+          ["Dorsal/parietal radiation","Travels more directly posteriorly through the parietal lobe","Superior retinal fibres = INFERIOR visual field","Contralateral INFERIOR quadrantanopia ('pie on the floor'). Classic in parietal lobe lesions."],
+          ["Primary visual cortex (V1, area 17)","Calcarine sulcus, medial occipital lobe. Macula has disproportionately large cortical representation at the occipital POLE.","Retinotopic map of contralateral visual field","Contralateral homonymous hemianopia WITH MACULAR SPARING — occipital pole has dual blood supply (MCA + PCA collateral), so macular vision often survives a PCA stroke that destroys the rest of V1."],
+        ]},
+        highlight:{type:"mnemonic",title:"Meyer's Loop vs Dorsal Radiation — PITS",content:"P = Parietal lobe → Inferior visual field defect (dorsal radiation carries superior retinal fibres = inferior field)\n\nT = Temporal lobe → Superior visual field defect (Meyer's loop carries inferior retinal fibres = superior field)\n\nMnemonic: PITS = Parietal-Inferior, Temporal-Superior\n\nAlternative: 'Meyer's loop is in the Temporal lobe and affects the Top (superior) field' — both halves start with T."},
+        draw:{title:"DRAW THIS: Complete Visual Pathway With All 8 Lesion Sites",content:"Draw two eyes, two optic nerves converging at the chiasm, two optic tracts diverging, two LGNs, then radiations splitting into Meyer's loop (looping down into temporal lobe) and dorsal radiation (straight back through parietal lobe), converging again at V1 in the occipital pole.\n\nNumber and label these 8 lesion points with their defects:\n1. Optic nerve → monocular blindness\n2. Chiasm (central) → bitemporal hemianopia\n3. Optic tract → contralateral homonymous hemianopia (incongruous)\n4. LGN → contralateral homonymous hemianopia (more congruous)\n5. Meyer's loop → contralateral superior quadrantanopia\n6. Dorsal radiation → contralateral inferior quadrantanopia\n7. Partial V1 → contralateral homonymous hemianopia, macular sparing\n8. Complete bilateral V1 → cortical blindness (Anton's syndrome)\n\nThis single diagram, drawn from memory, will answer the majority of visual pathway MEDEX questions."}
+      ,
+        qa:W2_QA["w2s3b"]},
+      {
+        id:"w2s3c",title:"Pupillary Light Reflex Pathway",
+        prose:"Distinct from the conscious visual pathway, the pupillary light reflex uses a separate route that bypasses the LGN and visual cortex entirely — this is why patients with cortical blindness can still have normal pupillary reflexes (a key distinguishing test).",
+        table:{headers:["Step","Pathway","Detail"],rows:[
+          ["Afferent limb","Retina → optic nerve → optic chiasm (partial decussation) → optic tract → BYPASSES LGN → pretectal nucleus (midbrain)","Carries light information to BOTH pretectal nuclei (bilateral projection) — this is why light in ONE eye causes BOTH pupils to constrict"],
+          ["Interneurone","Pretectal nucleus → BILATERAL projection to both Edinger-Westphal nuclei","Explains the consensual light reflex — shining light in the right eye constricts BOTH pupils equally"],
+          ["Efferent limb","Edinger-Westphal nucleus → CN III (parasympathetic fibres, outer surface) → ciliary ganglion → short ciliary nerves → sphincter pupillae","Both eyes constrict regardless of which eye was stimulated, because of the bilateral pretectal projection"],
+        ]},
+        highlight:{type:"clinical",title:"Relative Afferent Pupillary Defect (RAPD) — The Swinging Flashlight Test",content:"RAPD indicates ASYMMETRIC optic nerve or severe retinal disease between the two eyes (e.g., optic neuritis, severe glaucoma, central retinal artery occlusion).\n\nTest: shine light alternately in each eye. Normal: both pupils constrict equally regardless of which eye is illuminated (consensual reflex intact).\n\nRAPD positive: when light moves FROM the healthy eye TO the affected eye, the affected eye's pupil appears to PARADOXICALLY DILATE (Marcus Gunn pupil) — because the afferent signal from that eye is weaker, so it provides less than its share of bilateral constriction drive, and the consensual relaxation effect (from removing light from the healthy eye) dominates.\n\nRAPD localises the lesion to the AFFERENT pathway (retina or optic nerve) on the side that shows the defect — it is NOT seen in chiasmal, isolated CN III, or cortical lesions because those don't create asymmetric input from one eye's optic nerve."}
+      ,
+        qa:W2_QA["w2s3c"]}
+    ]
+  },
+  {
+    id:"w2s4",title:"5. Eye Movement Control & Conjugate Gaze",icon:"👀",color:"#f4a261",
+    subsections:[
+      {
+        id:"w2s4a",title:"Horizontal Gaze — PPRF & the Medial Longitudinal Fasciculus (MLF)",
+        prose:"Coordinated horizontal eye movement (both eyes moving together in the same direction) requires precise communication between CN VI nucleus on one side and CN III nucleus on the opposite side. The MLF is the white matter tract that makes this possible.",
+        table:{headers:["Structure","Location","Function","Lesion syndrome"],rows:[
+          ["PPRF (Paramedian Pontine Reticular Formation)","Pons, adjacent to CN VI nucleus — the 'horizontal gaze centre'","Receives cortical input (from contralateral frontal eye field) → drives ipsilateral CN VI nucleus directly + sends signal via MLF to contralateral CN III nucleus (medial rectus) for conjugate horizontal gaze","Lesion → ipsilateral horizontal gaze palsy (cannot look toward the side of the lesion with EITHER eye)"],
+          ["MLF (Medial Longitudinal Fasciculus)","Paired white matter tract connecting CN VI nucleus (one side) to CN III nucleus (medial rectus subnucleus, opposite side), running the length of the brainstem","Coordinates simultaneous abduction of one eye with adduction of the other for conjugate horizontal gaze","Internuclear ophthalmoplegia (INO) — see below"],
+        ]},
+        highlight:{type:"exam",title:"Internuclear Ophthalmoplegia (INO) — Classic MEDEX Topic",content:"A lesion of the MLF causes INO: on attempted gaze AWAY from the lesion side, the ADDUCTING eye (ipsilateral to lesion) fails to adduct fully, while the ABDUCTING eye (contralateral) shows nystagmus.\n\nMechanism: the PPRF/CN VI signal to drive the contralateral medial rectus (via MLF) is interrupted, so that eye cannot adduct properly, but the abducting eye still receives its direct signal and overshoots/nystagmuses as compensation.\n\nKey point: convergence is usually PRESERVED in INO (this distinguishes it from a true CN III medial rectus palsy) because convergence uses a different pathway (near-reflex triad, not the MLF/PPRF circuit).\n\nBILATERAL INO in a young patient = highly suggestive of MULTIPLE SCLEROSIS (demyelination of MLF). Unilateral INO in an older patient = more likely vascular (brainstem stroke)."}
+      ,
+        qa:W2_QA["w2s4a"]},
+      {
+        id:"w2s4b",title:"Vertical Gaze & the Superior Colliculus",
+        prose:"Vertical conjugate gaze is coordinated at the midbrain level, distinct from the pontine horizontal gaze centre. The key structure is the rostral interstitial nucleus of the MLF (riMLF) and its connections through the posterior commissure.",
+        table:{headers:["Structure","Function","Lesion syndrome"],rows:[
+          ["riMLF (rostral interstitial nucleus of MLF)","Midbrain — vertical and torsional gaze centre, analogous to PPRF for horizontal gaze","Lesion → vertical gaze palsy"],
+          ["Posterior commissure","Connects vertical gaze centres bilaterally, near the pineal gland/superior colliculus","Compression here (e.g., pinealoma) → Parinaud's syndrome"],
+        ]},
+        highlight:{type:"clinical",title:"Parinaud's Syndrome (Dorsal Midbrain Syndrome)",content:"Caused by compression of the dorsal midbrain/posterior commissure — classically by a PINEAL GLAND TUMOUR (pinealoma) or in obstructive hydrocephalus with aqueduct compression.\n\nClassic triad:\n1. UPGAZE PALSY (cannot look up) — most characteristic feature\n2. Convergence-retraction nystagmus on attempted upgaze\n3. Light-near dissociation — pupils react poorly to light but normally to accommodation/convergence (because the light reflex pathway near the pretectal nucleus is compressed, but the near-reflex pathway runs through a different route)\n\nAlso called 'setting sun sign' when severe (eyes appear to be forced downward, sclera visible above the iris) — particularly seen in neonatal hydrocephalus."}
+      ,
+        qa:W2_QA["w2s4b"]},
+      {
+        id:"w2s4c",title:"Vestibulo-Ocular Reflex (VOR) & Eye Movement Integration",
+        prose:"The VOR keeps images stable on the retina during head movement, allowing clear vision while moving. It operates with extremely short latency (<10ms) because it uses a direct three-neurone arc, bypassing cortical processing entirely.",
+        src:"https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260209.222123/resources/2bb12f0b0553360ab2a32df14cf182418e94deb5",
+          caption:"<strong>OpenStax Anatomy &amp; Physiology 2e, Figure 14.21 — Vestibulo-ocular Reflex</strong> — Connections between the vestibular system and the cranial nerves controlling eye movement (III, IV, VI) keep the eyes centred on a target during head movement. Excitation of eye muscles on one side and inhibition on the other produce compensatory eye movement equal and opposite to head motion. (CC BY 4.0)",
+        table:{headers:["Component","Role"],rows:[
+          ["Semicircular canals (CN VIII vestibular)","Detect head rotation/angular acceleration"],
+          ["Vestibular nuclei (pons/medulla)","Receive input from CN VIII, project to CN III, IV, VI nuclei via MLF"],
+          ["Extraocular muscles (via CN III, IV, VI)","Execute compensatory eye movement EQUAL and OPPOSITE to head movement"],
+        ]},
+        highlight:{type:"clinical",title:"VOR Testing — Doll's Eye / Caloric Testing",content:"Doll's eye (oculocephalic) test: in a comatose patient, turning the head should produce eyes moving in the OPPOSITE direction if the brainstem VOR pathway is intact ('doll's eyes present' = brainstem intact). If eyes move WITH the head (no compensation) = brainstem dysfunction.\n\nCaloric testing: cold water in one ear → nystagmus with slow phase TOWARD the irrigated ear, fast phase AWAY (mnemonic: COWS = Cold Opposite, Warm Same, referring to the FAST phase direction). Used to assess brainstem function in coma and to diagnose vestibular pathology.\n\nIn brain death: NO response to caloric testing (absent VOR) is one of the confirmatory clinical criteria."}
+      ,
+        qa:W2_QA["w2s4c"]}
+    ]
+  },
+  {
+    id:"w2s5",title:"6. Autonomic Innervation of the Eye",icon:"⚡",color:"#a8dadc",
+    subsections:[
+      {
+        id:"w2s5a",title:"Parasympathetic Pathway — Pupil Constriction & Accommodation",
+        prose:"The parasympathetic supply to the eye controls pupillary constriction (miosis) and accommodation (lens shape change for near vision) — both mediated through CN III as detailed earlier, but worth consolidating as a complete autonomic pathway.",
+        table:{headers:["Step","Structure","Detail"],rows:[
+          ["1. Origin","Edinger-Westphal nucleus","Midbrain, paired nuclei adjacent to CN III main nucleus"],
+          ["2. Preganglionic fibres","Travel with CN III","On outer/superficial surface of nerve — vulnerable to compression"],
+          ["3. Synapse","Ciliary ganglion","Located in the posterior orbit, lateral to optic nerve"],
+          ["4. Postganglionic fibres","Short ciliary nerves","Travel to sphincter pupillae (constriction) and ciliary muscle (accommodation)"],
+        ]}
+      ,
+        qa:W2_QA["w2s5a"]},
+      {
+        id:"w2s5b",title:"Sympathetic Pathway — Pupil Dilation & Horner's Syndrome",
+        prose:"The sympathetic pathway to the eye is a classic 3-neurone pathway spanning from the hypothalamus all the way down to the eye — its remarkable length means it can be interrupted at many different anatomical sites, each producing the same clinical syndrome (Horner's) but from very different underlying causes.",
+        table:{headers:["Neurone","Origin","Course","Synapse/Termination"],rows:[
+          ["1st order (central)","Posterolateral hypothalamus","Descends through brainstem (uncrossed) to the spinal cord","Synapses at ciliospinal centre of Budge, T1-T2 spinal cord level"],
+          ["2nd order (preganglionic)","Ciliospinal centre of Budge (T1-T2)","Exits spinal cord, ascends through sympathetic chain, OVER THE APEX OF THE LUNG (vulnerable to Pancoast tumour)","Synapses at superior cervical ganglion (near carotid bifurcation, base of skull)"],
+          ["3rd order (postganglionic)","Superior cervical ganglion","Travels along internal carotid artery (sympathetic plexus) → through cavernous sinus → joins CN V1 (nasociliary nerve) → long ciliary nerves","Terminates at: dilator pupillae (dilation), Müller's muscle (accessory eyelid elevator), facial sweat glands (face — but fibres to face travel with EXTERNAL carotid, separately)"],
+        ]},
+        highlight:{type:"exam",title:"Horner's Syndrome — Triad & Localisation",content:"CLASSIC TRIAD:\n1. MIOSIS (small pupil) — loss of dilator pupillae action, unopposed parasympathetic constriction\n2. PTOSIS (partial, mild) — loss of Müller's muscle (NOT the same as CN III ptosis, which is more severe due to levator palpebrae superioris involvement)\n3. ANHIDROSIS (loss of facial sweating) — only if lesion is BELOW the superior cervical ganglion (since face sweat fibres branch off with external carotid before this point... actually fibres to face sweat glands travel with the EXTERNAL carotid after leaving the superior cervical ganglion, so a lesion proximal to this ganglion = anhidrosis present; distal to ganglion = anhidrosis absent)\n\nLOCALISING BY LESION LEVEL:\n• 1st order (central): stroke, MS, syringomyelia — often with other brainstem/cord signs\n• 2nd order (preganglionic): Pancoast tumour (apex of lung), trauma, thoracic surgery — THIS is the level to always exclude with a CXR\n• 3rd order (postganglionic): carotid dissection (painful Horner's = urgent imaging), cavernous sinus pathology, cluster headache\n\nApraclonidine eye drop test: in Horner's, the affected pupil DILATES (due to denervation supersensitivity) while the normal pupil shows little change — pharmacological confirmation of the diagnosis."}
+      ,
+        qa:W2_QA["w2s5b"]},
+      {
+        id:"w2s5c",title:"Light-Near Dissociation & Argyll Robertson Pupil",
+        prose:"A specific and classically tested pupillary abnormality where the light reflex is impaired but the near/accommodation reflex remains intact — the opposite pattern would not have a specific name as it's less common and less specific.",
+        table:{headers:["Condition","Light reflex","Near reflex","Cause"],rows:[
+          ["Argyll Robertson pupil","Absent/poor (bilateral, small, irregular pupils — 'prostitute's pupil': accommodates but doesn't react)","Intact","Neurosyphilis (tertiary) — lesion at the pretectal nucleus level, sparing the near-reflex pathway which runs more ventrally"],
+          ["Parinaud's syndrome (dorsal midbrain)","Absent/poor","Intact","Pinealoma or other dorsal midbrain compression — same light-near dissociation mechanism"],
+          ["Adie's tonic pupil","Poor, slow","Slow but eventually present (tonic = slow redilation after near response)","Ciliary ganglion damage/denervation — often idiopathic, associated with absent deep tendon reflexes (Holmes-Adie syndrome)"],
+        ]},
+        highlight:{type:"mnemonic",title:"Argyll Robertson — 'Accommodates But Doesn't React'",content:"Classic exam phrase: Argyll Robertson pupils 'accommodate but do not react' (to light).\n\nAssociated with neurosyphilis — historically called 'prostitute's pupil' because it 'accommodates but does not react' (a crude but memorable mnemonic from older textbooks, referencing the social stigma of syphilis).\n\nBilateral, small, irregular pupils that constrict normally with near/convergence effort but show minimal or no response to direct light. Caused by a lesion in the pretectal region affecting the light reflex pathway while sparing the separate near-reflex circuitry."}
+      ,
+        qa:W2_QA["w2s5c"]}
+    ]
+  }
+];
+
+
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
@@ -713,8 +1163,14 @@ let revealedStems={};
 function saveChecked(){localStorage.setItem('medex_checked',JSON.stringify(checked));}
 
 function updateProgress(){
-  const total=W1_SECTIONS.reduce((a,s)=>a+s.subsections.length,0);
-  const done=Object.values(checked).filter(Boolean).length;
+  const w1Total=W1_SECTIONS.reduce((a,s)=>a+s.subsections.length,0);
+  const w2Total=W2_SECTIONS.reduce((a,s)=>a+s.subsections.length,0);
+  const total=w1Total+w2Total;
+  const w1Ids=new Set(W1_SECTIONS.flatMap(s=>s.subsections.map(sub=>sub.id)));
+  const w2Ids=new Set(W2_SECTIONS.flatMap(s=>s.subsections.map(sub=>sub.id)));
+  const w1Done=Object.keys(checked).filter(k=>checked[k]&&w1Ids.has(k)).length;
+  const w2Done=Object.keys(checked).filter(k=>checked[k]&&w2Ids.has(k)).length;
+  const done=w1Done+w2Done;
   document.getElementById('progress-pill').textContent=done+' / '+total+' done';
   const pct=total>0?Math.round(done/total*100):0;
   const fill=document.getElementById('ov-fill');
@@ -722,7 +1178,9 @@ function updateProgress(){
   if(fill)fill.style.width=pct+'%';
   if(pctEl)pctEl.textContent=pct+'%';
   const w1c=document.getElementById('w1-count');
-  if(w1c)w1c.textContent=done+'/'+total;
+  if(w1c)w1c.textContent=w1Done+'/'+w1Total;
+  const w2c=document.getElementById('w2-count');
+  if(w2c)w2c.textContent=w2Done+'/'+w2Total;
 }
 
 // ═══════════════════════════════════════════════
@@ -733,7 +1191,7 @@ function showView(name){
   document.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   const tabs=document.querySelectorAll('.tb-tab');
-  const map={overview:0,timetable:1,week1:2};
+  const map={overview:0,timetable:1,week1:2,week2:3};
   if(map[name]!==undefined)tabs[map[name]]?.classList.add('active');
 }
 function setSbActive(el){
@@ -817,11 +1275,11 @@ function renderOverview(){
 // ═══════════════════════════════════════════════
 // WEEK 1 NOTES RENDER
 // ═══════════════════════════════════════════════
-function renderW1(){
-  const container=document.getElementById('w1-sections');
+function renderWeekSections(sectionsData, containerId){
+  const container=document.getElementById(containerId);
   if(!container)return;
   container.innerHTML='';
-  W1_SECTIONS.forEach(sec=>{
+  sectionsData.forEach(sec=>{
     const secEl=document.createElement('div');
     secEl.style.marginBottom='28px';
     secEl.innerHTML=`
@@ -840,6 +1298,8 @@ function renderW1(){
     container.appendChild(secEl);
   });
 }
+function renderW1(){ renderWeekSections(W1_SECTIONS, 'w1-sections'); }
+function renderW2(){ renderWeekSections(W2_SECTIONS, 'w2-sections'); }
 
 function buildSubsection(sub,color,startOpen){
   const isChecked=!!checked[sub.id];
@@ -853,7 +1313,15 @@ function buildSubsection(sub,color,startOpen){
 
   // ANATOMY IMAGE — embedded directly inline, no click needed
   if(sub.image){
-    bodyHTML+=`
+    if(sub.image.svgInline){
+      bodyHTML+=`
+      <div class="anat-img-wrap" style="cursor:zoom-in;" onclick="openSvgLightbox(this.querySelector('svg').outerHTML, '${(sub.image.caption||'').replace(/'/g,"&#39;")}')">
+        <div style="background:#fff;padding:4px;">${sub.image.svgInline}</div>
+        <div style="text-align:center;font-size:10px;color:#555;padding:3px 0 1px;letter-spacing:.05em;">🔍 Click diagram to zoom</div>
+        <div class="anat-img-caption">${sub.image.caption||''}</div>
+      </div>`;
+    } else {
+      bodyHTML+=`
       <div class="anat-img-wrap">
         <img src="${sub.image.src}"
              alt="${sub.image.caption}"
@@ -865,6 +1333,23 @@ function buildSubsection(sub,color,startOpen){
         />
         <div style="text-align:center;font-size:10px;color:#555;padding:3px 0 1px;letter-spacing:.05em;">🔍 Click image to zoom</div>
         <div class="anat-img-caption">${sub.image.caption}</div>
+      </div>`;
+    }
+  }
+  // SECOND IMAGE (real photographic/textbook anatomy alongside custom diagram)
+  if(sub.image2){
+    bodyHTML+=`
+      <div class="anat-img-wrap">
+        <img src="${sub.image2.src}"
+             alt="${sub.image2.caption}"
+             loading="lazy"
+             title="Click to zoom"
+             onclick="openLightbox(this.src, this.dataset.caption)"
+             data-caption="${sub.image2.caption}"
+             onerror="this.parentElement.innerHTML='<div style=\'padding:16px;text-align:center;color:#666;font-size:12px\'>📸 Image loads when online — <a href=\'${sub.image2.src}\' target=\'_blank\' style=\'color:#4a9fd4\'>view directly</a></div>'"
+        />
+        <div style="text-align:center;font-size:10px;color:#555;padding:3px 0 1px;letter-spacing:.05em;">🔍 Click image to zoom</div>
+        <div class="anat-img-caption">${sub.image2.caption}</div>
       </div>`;
   }
 
@@ -976,7 +1461,7 @@ function toggleSubsec(id){
 }
 
 function expandAllSubs(secId){
-  const sec=W1_SECTIONS.find(s=>s.id===secId);
+  const sec=W1_SECTIONS.find(s=>s.id===secId) || W2_SECTIONS.find(s=>s.id===secId);
   if(!sec)return;
   sec.subsections.forEach(sub=>{
     const body=document.getElementById('body-'+sub.id);
@@ -1001,12 +1486,25 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderTimetable();
   renderOverview();
   renderW1();
+  renderW2();
   updateProgress();
 });
 
 function openLightbox(src, caption) {
   const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').style.display = 'block';
+  document.getElementById('lightbox-svg').style.display = 'none';
   document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-caption').innerHTML = caption || '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function openSvgLightbox(svgHtml, caption) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').style.display = 'none';
+  const svgContainer = document.getElementById('lightbox-svg');
+  svgContainer.style.display = 'flex';
+  svgContainer.innerHTML = svgHtml;
   document.getElementById('lightbox-caption').innerHTML = caption || '';
   lb.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1022,6 +1520,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
 <div id="lightbox" onclick="closeLightbox()">
   <button id="lightbox-close" onclick="closeLightbox()">✕</button>
   <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()"/>
+  <div id="lightbox-svg" style="display:none;max-width:95vw;max-height:88vh;background:#fff;border-radius:6px;box-shadow:0 8px 48px rgba(0,0,0,.8);padding:12px;align-items:center;justify-content:center;" onclick="event.stopPropagation()"></div>
   <div id="lightbox-caption"></div>
   <div id="lightbox-hint">Click anywhere or press ESC to close</div>
 </div>
